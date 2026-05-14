@@ -10,10 +10,10 @@
    its own container instead.
 ─────────────────────────────────────────────── */
 html {
-  overflow-x: clip; /* clip instead of hidden — doesn't create a stacking context */
+  overflow-x: clip;
 }
 body {
-  overflow-x: hidden;
+  overflow-x: clip; /* clip not hidden — hidden breaks position:sticky */
   max-width: 100%;
 }
 
@@ -101,7 +101,7 @@ img, video, iframe, embed, object {
   padding-right: clamp(10px, 4vw, 44px);
 }
 
-/* Toolbar sticky top matches navbar height */
+/* Toolbar sticky top matches fixed navbar height */
 .toolbar { top: 52px; }
 @media (max-width: 640px) { .toolbar { top: 48px; } }
 

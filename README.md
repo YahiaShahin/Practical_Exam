@@ -11,9 +11,9 @@ A fully client-side, zero-dependency web app for studying and practising C progr
 
 | File | Purpose |
 |---|---|
-| `index.html` | Landing page — links to both tools, guided tour, credits |
-| `study.html` | Interactive study guide — 10 topics with demos, flowcharts, and live widgets |
-| `problems.html` | Practice problems — 50+ questions with explanations, code breakdowns, and Try It panels |
+| `index.html` | Landing page — hero, CTA cards, topic chips, stats, credits, onboarding tour |
+| `study.html` | Interactive study guide — 11 topics with demos, flowcharts, and live widgets |
+| `problems.html` | Practice problems — 46+ questions with explanations, code breakdowns, and Try It panels |
 
 ---
 
@@ -21,136 +21,151 @@ A fully client-side, zero-dependency web app for studying and practising C progr
 
 ```
 /
-├── index.html          # Home / landing page
-├── study.html          # Study guide
-├── problems.html       # Practice problems
+├── index.html           # Home / landing page
+├── study.html           # Study guide
+├── problems.html        # Practice problems
 │
 ├── css/
-│   ├── style.css       # Shared design system — tokens, themes, layout, typography
-│   ├── study.css       # Study page specific styles — flowcharts, demos, loop viz
-│   └── problems.css    # Problems page specific styles — modal, cards, code panel
+│   ├── style.css        # Shared design system — tokens, themes, navbar, layout, typography
+│   ├── study.css        # Study page styles — flowcharts, demos, loop viz, functions section
+│   ├── problems.css     # Problems page styles — modal, cards, code panel
+│   └── responsive.css   # Universal responsive layer — all breakpoints, overflow prevention
 │
 └── js/
-    ├── nav.js          # Navbar injected into all pages
-    ├── study.js        # All study page interactivity
-    ├── problems.js     # Problems page logic — modal, filter, search, mode toggle
-    └── problems-data.js # All question data (Q array) — ~2700 lines
+    ├── nav.js           # Fixed navbar injected into all pages — hamburger, theme, ? tour button
+    ├── study.js         # All study page interactivity
+    ├── problems.js      # Problems page logic — modal, filter, search, progress, celebration
+    └── problems-data.js # All question data (Q array)
 ```
 
 ---
 
 ## Features
 
+### Home (`index.html`)
+- **Onboarding tour** — 6-slide overlay shown on first visit, re-triggerable via the `?` button in the navbar
+- **Topic chips** — animated hover chips for all 11 study topics
+- **Course stats** — animated number counters (topics, problems, examples, standard)
+- **Easter egg** — click **RevisKor** 5 times in the footer (hint text says "do not click this"). A hacker-style terminal types out a motivational message. Also triggerable via the Konami code (↑↑↓↓←→←→BA)
+
 ### Study Guide (`study.html`)
-- **10 topics** covering the full Mansoura Uni intro syllabus: Syntax → Scopes → Variables → Operators → Printf/Scanf → Conditions → Loops → 1D Arrays → 2D Arrays → Quick Reference
-- **Detailed / Brief toggle** — switch between full mentor-style explanations and TL;DR summaries
-- **Interactive loop flowchart** — step through `for`, `while`, and `do...while` execution phase by phase, with live code highlighting and adjustable From/To parameters that auto-update the code display
-- **Live printf builder** — edit name/score/GPA and watch the C code and terminal output update in real time
-- **Operator calculator** — live C-accurate integer division and modulo
-- **Scope visualiser** — click any scope to see exactly which variables are accessible
-- **Array inspector** — click cells to inspect address, index, and value; resize and edit live
+- **11 topics**: Syntax Basics → Scopes → Variables → Operators → Printf/Scanf → Conditions → Loops → **Functions** → 1D Arrays → 2D Arrays → Quick Reference
+- **Detailed / Brief toggle** — full explanations vs. TL;DR summaries
+- **Interactive Order of Operations table** (S4) — click any precedence row to see a step-by-step evaluation with live code
+- **Functions section** (S8) — 4 clickable type cards (void/no-params, void/params, return/no-params, return/params), each opening a detail panel with explanation, anatomy breakdown, syntax-highlighted code, and tip
+- **Interactive loop flowchart** — step through `for`, `while`, `do...while` phase by phase with live code highlighting
+- **Live printf builder** — edit values, watch C code and terminal output update in real time
+- **Operator calculator** — C-accurate integer division and modulo
+- **Scope visualiser** — click any scope to see accessible variables
+- **Array inspector** — click cells to inspect address, index, value; resize and edit live
 - **2D matrix inspector** — hover rows/columns, click cells, resize
-- **Sidebar progress tracker** — marks sections as viewed via IntersectionObserver
-- **6 themes** — Nord (default), Original, Midnight Gold, Neon Synth, Rosé Pine, Latte, Paper
+- **Sidebar progress tracker** — marks sections viewed via IntersectionObserver; sticky sidebar scrolls with the page
+- **7 themes** — Paper, Latte, Nord, Original Dark, Midnight Gold, Neon Synth, Rosé Pine
 
 ### Problems (`problems.html`)
-- **50+ questions** grouped into: Practical Exam (Q1–Q20), Task 1, Task 2, Task 3
-- **Modal study view** — each question opens a full panel with:
-  - Long-form explanation
-  - Step-by-step execution walkthrough
+- **46+ questions** grouped by topic
+- **Modal study view** per question:
+  - Full explanation + step-by-step walkthrough
   - Line-by-line code breakdown
-  - Common mistakes
-  - Syntax tip
+  - Common mistakes + syntax tip
   - Expected output
-  - Live C code panel (syntax highlighted, copy button)
-  - **Try It** — interactive inputs that simulate the program output
-  - Personal notes (auto-saved per question to localStorage)
-- **Detailed / Brief mode toggle** — universal toggle in the toolbar; Brief mode shows only the one-liner summary, breakdown, tip, concepts, and output — ideal for quick revision
-- **Progress tracking** — mark questions as learned, progress bar, per-session persistence via localStorage
-- **Search** — fuzzy search across titles, briefs, and concepts
-- **Topic filter** — filter by tag group
-- **Keyboard navigation** — `←` / `→` to navigate questions, `Esc` to close, `/` to focus search
-- **Swipe navigation** — touch swipe left/right to navigate on mobile
+  - Syntax-highlighted C code panel with copy button
+  - **Try It** — interactive inputs that simulate program output
+  - Personal notes (auto-saved to localStorage per question)
+- **Detailed / Brief mode toggle** in toolbar
+- **Progress tracking** — mark as learned, progress bar, localStorage persistence
+- **Search** — across titles, briefs, and concepts
+- **Topic filter** buttons
+- **Keyboard navigation** — `←`/`→` navigate, `Esc` close, `/` focus search
+- **100% completion celebration**:
+  - **First time ever** → full confetti + trophy card with motivational quote
+  - **After a reset, finishing again** → quieter "you did it again" variant with rising particles and a different message
+  - Fires once per browser session (sessionStorage); resets when progress is reset
+
+### Navbar (all pages)
+- **Fixed position** — always visible, no gap issues
+- **Hamburger menu** on mobile (≤ 640px) — collapses links and theme selector into a dropdown
+- **`?` button** — always visible; reopens the onboarding tour on the home page, or navigates to `index.html?tour=1` from other pages
+- **Theme selector** — 7 themes, saved to localStorage
 
 ---
 
 ## Themes
 
-Themes are set via `data-theme` on `<html>` and saved to `localStorage` under the key `study_theme`.
+Themes are set via `data-theme` on `<html>` and saved to `localStorage` under `study_theme`.
 
-| Theme key | Description |
+| Key | Description |
 |---|---|
 | `paper` | Clean white (default) |
 | `latte` | Catppuccin Latte (light) |
 | `nord` | Icy blue-grey |
-| `dark-original` | Original dark — deep navy with cyan accent |
+| `dark-original` | Deep navy with cyan accent |
 | `midnight-gold` | Black with gold accent |
 | `neon-synth` | Deep purple with neon cyan |
 | `rose-pine` | Muted rose and purple |
-
-Light themes (`latte`, `paper`) have dedicated overrides in `style.css` and `problems.css` to ensure syntax tokens and UI elements remain readable.
 
 ---
 
 ## Data
 
-All question data lives in `js/problems-data.js` as a single `const Q = [...]` array. Each entry has:
+All question data lives in `js/problems-data.js` as `const Q = [...]`. Each entry:
 
 ```js
 {
-  num,              // int — question number
-  title,            // string
-  tag,              // string — topic slug
-  tagLabel,         // string — display label
-  group,            // string — "practical" | tag slug
-  brief,            // string — one-line summary (shown in Brief mode)
-  concepts,         // string[] — concept tags
-  explanationDetailed, // HTML string — full explanation
-  whatHappens,      // string[] | undefined — step-by-step list
-  breakdown,        // { code, text }[] — line-by-line breakdown
-  mistakes,         // { text }[] | undefined — common mistakes
-  syntaxTip,        // HTML string
-  output,           // string — expected terminal output
-  rawCode,          // string — full C source (with \n newlines)
-  tryIt,            // { desc, inputs[], run(vals) } | undefined
-  layout,           // "wide" | undefined — optional wide modal
+  num,                    // int — question number
+  title,                  // string
+  tag,                    // string — topic slug
+  tagLabel,               // string — display label
+  group,                  // string — "practical" | tag slug
+  brief,                  // string — one-line summary (Brief mode)
+  concepts,               // string[]
+  explanationDetailed,    // HTML string
+  whatHappens,            // string[] | undefined
+  breakdown,              // { code, text }[]
+  mistakes,               // { text }[] | undefined
+  syntaxTip,              // HTML string
+  output,                 // string — expected terminal output
+  rawCode,                // string — full C source
+  tryIt,                  // { desc, inputs[], run(vals) } | undefined
+  layout,                 // "wide" | undefined
 }
 ```
 
-To add a new question, append an object to the `Q` array following the same shape.
-
 ---
 
-## localStorage Keys
+## localStorage / sessionStorage Keys
 
-| Key | Value |
-|---|---|
-| `study_theme` | Active theme name |
-| `csg3_learned` | JSON array of learned question numbers |
-| `csg3_notes` | JSON object mapping question number → note string |
-| `csg3_modal_mode` | `"detailed"` or `"brief"` |
+| Storage | Key | Value |
+|---|---|---|
+| `localStorage` | `study_theme` | Active theme name |
+| `localStorage` | `csg3_learned` | JSON array of learned question numbers |
+| `localStorage` | `csg3_notes` | JSON object — question number → note string |
+| `localStorage` | `csg3_modal_mode` | `"detailed"` or `"brief"` |
+| `localStorage` | `c_tour_seen` | `"true"` when onboarding has been seen |
+| `localStorage` | `csg3_celebrated_once` | `"1"` after first 100% completion |
+| `sessionStorage` | `csg3_cel_session` | `"1"` — blocks celebration re-firing in same tab session |
 
 ---
 
 ## Browser Support
 
-Works in any modern browser (Chrome, Firefox, Edge, Safari). No polyfills needed. Uses:
-- CSS custom properties (variables)
+Any modern browser (Chrome, Firefox, Edge, Safari). No polyfills. Uses:
+- CSS custom properties, `position: fixed`, `clamp()`
 - IntersectionObserver
+- `sessionStorage` / `localStorage`
 - `navigator.clipboard` (copy button — gracefully absent if unavailable)
-- `localStorage`
 
 ---
 
 ## Running Locally
 
-Just open `index.html` directly in a browser. No server, no npm, no build step.
+Open `index.html` directly in a browser. No server, no npm, no build step.
 
-```
+```bash
 # Windows
 start index.html
 
-# macOS
+# macOS / Linux
 open index.html
 ```
 

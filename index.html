@@ -60,30 +60,9 @@
   font-size: clamp(.85rem, 3vw, 1rem);
   color: var(--muted);
   max-width: 560px;
-  margin: 0 auto 1rem;
+  margin: 0 auto 2.5rem;
   line-height: 1.8;
   animation: fadeUp .5s ease .2s both;
-}
-.hero-meta {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--muted);
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  flex-wrap: wrap;
-  margin-bottom: 3rem;
-  animation: fadeUp .5s ease .25s both;
-}
-.hero-meta span {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.hero-meta .num-hl {
-  color: var(--accent);
-  font-weight: 700;
-  font-size: 1.1rem;
 }
 
 /* CTA Cards */
@@ -154,28 +133,30 @@
 .topic-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
   justify-content: center;
   overflow: visible;
-  padding: 4px 2px; /* prevent border clipping on hover */
+  padding: 6px 4px;
 }
 .topic-chip {
   font-family: var(--font-mono);
-  font-size: 10px;
-  padding: 4px 12px;
-  border-radius: 20px;
+  font-size: 12px;
+  padding: 7px 18px;
+  border-radius: 24px;
   border: 1px solid var(--border);
-  color: var(--muted);
-  background: transparent;
-  transition: all .2s;
+  color: var(--text2);
+  background: var(--bg2);
+  transition: all .22s cubic-bezier(.22,.61,.36,1);
   cursor: default;
-  display: inline-block; /* ensure hover area is correct */
+  display: inline-block;
+  font-weight: 500;
 }
 .topic-chip:hover {
   border-color: var(--accent);
   color: var(--accent);
   background: var(--accent-dim);
-  box-shadow: 0 0 10px var(--accent-dim);
+  box-shadow: 0 0 16px var(--accent-dim), 0 2px 8px rgba(0,0,0,.08);
+  transform: translateY(-2px) scale(1.04);
 }
 
 /* Info section */
@@ -192,27 +173,35 @@
 .info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
-  gap: 12px;
+  gap: 14px;
   margin-top: 1rem;
 }
 .info-item {
   background: var(--bg2);
   border: 1px solid var(--border);
-  border-radius: var(--rs);
-  padding: 1rem;
+  border-radius: var(--r);
+  padding: 1.5rem 1rem;
+  transition: transform .22s cubic-bezier(.22,.61,.36,1), border-color .22s, box-shadow .22s;
+}
+.info-item:hover {
+  transform: translateY(-3px);
+  border-color: var(--bd-ac);
+  box-shadow: 0 0 24px var(--bg-ac);
 }
 .info-item .info-num {
   font-family: var(--font-mono);
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 2.2rem;
+  font-weight: 800;
   color: var(--accent);
   display: block;
+  line-height: 1;
+  margin-bottom: 6px;
 }
 .info-item .info-label {
-  font-size: .75rem;
+  font-size: .7rem;
   color: var(--muted);
   font-family: var(--font-mono);
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   text-transform: uppercase;
 }
 
@@ -233,59 +222,113 @@
 .credits-inner strong { color: var(--text2); font-weight: 600; }
 .credits-inner .mention { color: var(--accent); }
 
-/* ── RevisKor name animation ── */
+/* ── RevisKor name — continuous shimmer + pulse ── */
 .name-reviskor {
   display: inline-block;
-  font-weight: 700;
-  font-size: 13px;
+  font-weight: 800;
+  font-size: 1.1rem;
   letter-spacing: .5px;
   position: relative;
   cursor: default;
-  /* shimmer gradient that slides across */
+  color: var(--accent);
+}
+/* Continuous shimmer on ::before */
+.name-reviskor::before {
+  content: 'RevisKor';
+  position: absolute;
+  inset: 0;
   background: linear-gradient(
-    90deg,
-    var(--text2)   0%,
-    var(--text2)  30%,
-    var(--accent) 45%,
-    #fff          50%,
-    var(--accent) 55%,
-    var(--text2)  70%,
-    var(--text2) 100%
+    100deg,
+    transparent          0%,
+    transparent         25%,
+    rgba(255,255,255,.0) 35%,
+    rgba(255,255,255,.95) 48%,
+    var(--accent2)       50%,
+    rgba(255,255,255,.95) 52%,
+    rgba(255,255,255,.0) 62%,
+    transparent         75%,
+    transparent        100%
   );
-  background-size: 250% auto;
+  background-size: 400% auto;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: nameShimmer 3s ease 1.2s both;
+  /* play once on load, then loop every 4s */
+  animation: nameShimmer 1.8s ease 1.2s both, nameShimmerLoop 4s ease 3.2s infinite;
+  pointer-events: none;
 }
+/* Underline that draws in then pulses */
 .name-reviskor::after {
   content: '';
   position: absolute;
-  left: 0; bottom: -2px;
-  width: 100%; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  left: 0; bottom: -3px;
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+  border-radius: 2px;
   transform: scaleX(0);
   transform-origin: left;
-  animation: nameUnderline 3s ease 1.2s both;
+  animation: nameUnderline 1.8s ease 1.2s both, nameUnderlinePulse 3s ease 3.2s infinite;
 }
-.name-reviskor:hover,
-.name-reviskor:active {
-  animation: nameShimmer 1.4s ease forwards;
-}
-.name-reviskor:hover::after,
-.name-reviskor:active::after {
-  animation: nameUnderline 1.4s ease forwards;
-}
+/* Hover: faster shimmer */
+.name-reviskor:hover::before { animation: nameShimmerFast .7s ease forwards; }
+.name-reviskor:hover::after  { animation: nameUnderlineGlow .7s ease forwards; }
 
 @keyframes nameShimmer {
   0%   { background-position: 200% center; }
-  100% { background-position: -50% center; }
+  100% { background-position: -100% center; }
+}
+@keyframes nameShimmerLoop {
+  0%   { background-position: 200% center; }
+  60%  { background-position: -100% center; }
+  100% { background-position: -100% center; }
+}
+@keyframes nameShimmerFast {
+  0%   { background-position: 200% center; }
+  100% { background-position: -100% center; }
 }
 @keyframes nameUnderline {
   0%   { transform: scaleX(0); opacity: 0; }
-  30%  { opacity: 1; }
-  60%  { transform: scaleX(1); }
-  100% { transform: scaleX(1); opacity: .6; }
+  20%  { opacity: 1; }
+  70%  { transform: scaleX(1); }
+  100% { transform: scaleX(1); opacity: .8; }
+}
+@keyframes nameUnderlinePulse {
+  0%   { opacity: .8; box-shadow: none; }
+  50%  { opacity: 1;  box-shadow: 0 0 8px var(--accent); }
+  100% { opacity: .8; box-shadow: none; }
+}
+@keyframes nameUnderlineGlow {
+  0%   { transform: scaleX(1); opacity: .8; }
+  50%  { opacity: 1; box-shadow: 0 0 14px var(--accent); }
+  100% { transform: scaleX(1); opacity: 1; box-shadow: 0 0 10px var(--accent); }
+}
+
+/* ── Easter egg hint text ── */
+.egg-hint {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--muted);
+  opacity: .35;
+  cursor: pointer;
+  transition: opacity .2s, color .2s;
+  user-select: none;
+  letter-spacing: .5px;
+}
+.egg-hint:hover { opacity: .7; color: var(--accent); }
+/* name-reviskor gets a pointer when egg is available */
+.name-reviskor { cursor: pointer; }
+
+/* ── Info number counter animation ── */
+.info-num {
+  display: block;
+  transition: transform .15s ease;
+}
+.info-num.counting {
+  animation: numPop .12s ease;
+}
+@keyframes numPop {
+  0%   { transform: scale(1.18); color: var(--accent2); }
+  100% { transform: scale(1);    color: var(--accent); }
 }
 
 /* Guided Tour Modal */
@@ -439,14 +482,98 @@
   color: #fff;
 }
 
-@media (max-width: 480px) {
-  .ob-card { padding: 1.75rem 1rem 1.25rem; }
-  .ob-slide-title { font-size: 1.05rem; }
-  .ob-slides { min-height: 310px; }
-  .ob-pill { font-size: 9px; padding: 3px 9px; }
-  .ob-btn { font-size: 10px; padding: 8px 16px; }
-  .ob-footer { margin-top: 1.25rem; }
+/* ── EASTER EGG — Terminal ── */
+#egg-terminal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
 }
+#egg-terminal.active { display: flex; }
+.egg-window {
+  background: #0a0e14;
+  border: 1px solid #21262d;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 620px;
+  box-shadow:
+    0 0 0 1px #30363d,
+    0 0 60px rgba(63,185,80,.12),
+    0 32px 80px rgba(0,0,0,.7);
+  overflow: hidden;
+  animation: eggSlideIn .38s cubic-bezier(.22,.61,.36,1) both;
+}
+@keyframes eggSlideIn {
+  from { opacity: 0; transform: scale(.94) translateY(18px); }
+  to   { opacity: 1; transform: scale(1)   translateY(0); }
+}
+.egg-titlebar {
+  background: #161b22;
+  padding: 11px 16px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border-bottom: 1px solid #21262d;
+}
+.egg-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.egg-dot-r { background: #ff5f57; }
+.egg-dot-y { background: #febc2e; }
+.egg-dot-g { background: #28c840; }
+.egg-title {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 11px;
+  color: #6e7681;
+  margin-left: 4px;
+  flex: 1;
+  text-align: center;
+  letter-spacing: .03em;
+}
+.egg-close-btn {
+  background: none; border: none; color: #6e7681;
+  cursor: pointer; font-size: 15px; padding: 0 2px;
+  line-height: 1; transition: color .15s; flex-shrink: 0;
+}
+.egg-close-btn:hover { color: #e6edf3; }
+.egg-body {
+  padding: 18px 20px 22px;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 12.5px;
+  line-height: 1.85;
+  color: #c9d1d9;
+  min-height: 240px;
+  max-height: 72vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.egg-body::-webkit-scrollbar { width: 4px; }
+.egg-body::-webkit-scrollbar-thumb { background: #30363d; border-radius: 2px; }
+.egg-line { display: block; white-space: pre-wrap; word-break: break-word; }
+.egg-line.dim    { color: #6e7681; }
+.egg-line.green  { color: #3fb950; }
+.egg-line.cyan   { color: #58a6ff; }
+.egg-line.gold   { color: #d29922; }
+.egg-line.red    { color: #f85149; }
+.egg-line.bold   { color: #e6edf3; font-weight: 700; }
+.egg-line.quote  { color: #79c0ff; font-style: italic; border-left: 2px solid #1f6feb; padding-left: 10px; margin: 2px 0; }
+.egg-line.hi     { color: #3fb950; font-weight: 700; letter-spacing: .03em; }
+.egg-cursor {
+  display: inline-block;
+  width: 7px; height: 13px;
+  background: #3fb950;
+  vertical-align: middle;
+  animation: eggBlink .9s step-end infinite;
+  margin-left: 1px;
+  border-radius: 1px;
+}
+@keyframes eggBlink { 0%,100%{opacity:1} 50%{opacity:0} }
 </style>
 </head>
 <body>
@@ -461,11 +588,6 @@
     A comprehensive summary of everything we've studied this term in Intro to Programming.
     Study the concepts, practice with exam-style problems, and master C before your practical exam.
   </p>
-  <div class="hero-meta">
-    <span><span class="num-hl" id="hero-topics">10</span> Topics Covered</span>
-    <span><span class="num-hl" id="hero-probs">20</span> Practice Problems</span>
-    <span><span class="num-hl">100%</span> Interactive</span>
-  </div>
 </div>
 
 <!-- CTA CARDS -->
@@ -505,6 +627,7 @@
       <span class="topic-chip">While & Do-While</span>
       <span class="topic-chip">Functions</span>
       <span class="topic-chip">1D Arrays</span>
+      <span class="topic-chip">2D Arrays</span>
     </div>
   </div>
 
@@ -513,11 +636,11 @@
     <h3>Course Overview</h3>
     <div class="info-grid">
       <div class="info-item">
-        <span class="info-num" id="info-topics">10</span>
+        <span class="info-num" id="info-topics">11</span>
         <span class="info-label">Topics</span>
       </div>
       <div class="info-item">
-        <span class="info-num" id="info-probs">20</span>
+        <span class="info-num" id="info-probs">46</span>
         <span class="info-label">Problems</span>
       </div>
       <div class="info-item">
@@ -535,9 +658,10 @@
   <div class="footer">
     <div class="credits-inner">
       <p>
-        Built by <span class="name-reviskor">RevisKor</span><br>
+        Built by <span class="name-reviskor" id="reviskor-name">RevisKor</span>
+        <span class="egg-hint" id="egg-hint">← do not click this</span><br>
         Special mention to <span class="mention">Comrade General Ice Cube</span>
-        & <span class="mention">Marwan Elmoghazy</span>
+        &amp; <span class="mention">Marwan Elmoghazy</span>
       </p>
     </div>
   </div>
@@ -657,19 +781,74 @@
     </div>
   </div><!-- /ob-overlay -->
 
+<!-- ── EASTER EGG TERMINAL ── -->
+<div id="egg-terminal">
+  <div class="egg-window">
+    <div class="egg-titlebar">
+      <span class="egg-dot egg-dot-r"></span>
+      <span class="egg-dot egg-dot-y"></span>
+      <span class="egg-dot egg-dot-g"></span>
+      <span class="egg-title">reviskor@mansoura-uni ~ bash</span>
+      <button class="egg-close-btn" onclick="closeEgg()">✕</button>
+    </div>
+    <div class="egg-body" id="egg-body"></div>
+  </div>
+</div>
+
 <script src="js/problems-data.js"></script>
 <script>
 /* Dynamic Stats */
 (function(){
   if (typeof Q !== 'undefined') {
-    const topicCount = new Set(Q.map(q => q.tag)).size;
     const probCount = Q.length;
-    
-    document.getElementById('hero-topics').textContent = topicCount;
-    document.getElementById('hero-probs').textContent = probCount;
-    document.getElementById('info-topics').textContent = topicCount;
     document.getElementById('info-probs').textContent = probCount;
   }
+  /* Topics is always 11 — matches the study guide sections */
+  document.getElementById('info-topics').textContent = '11';
+})();
+
+/* ── Counter animation ── */
+function animateCounter(el, target, suffix) {
+  const isNum = !isNaN(parseInt(target));
+  if (!isNum) return; // skip non-numeric like "C89" or "50+"
+  const end = parseInt(target);
+  const dur = 900;
+  const start = performance.now();
+  function step(now) {
+    const p = Math.min((now - start) / dur, 1);
+    // ease out cubic
+    const ease = 1 - Math.pow(1 - p, 3);
+    const val = Math.round(ease * end);
+    el.textContent = val + (suffix || '');
+    el.classList.add('counting');
+    setTimeout(() => el.classList.remove('counting'), 130);
+    if (p < 1) requestAnimationFrame(step);
+    else el.textContent = target; // set exact final value
+  }
+  requestAnimationFrame(step);
+}
+
+// Trigger counters when the stats section scrolls into view
+(function() {
+  const items = document.querySelectorAll('.info-num');
+  const targets = Array.from(items).map(el => el.textContent.trim());
+  let fired = false;
+  const obs = new IntersectionObserver(entries => {
+    if (fired) return;
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        fired = true;
+        items.forEach((el, i) => {
+          const raw = targets[i];
+          const hasSuffix = raw.endsWith('+');
+          const num = hasSuffix ? raw.slice(0, -1) : raw;
+          setTimeout(() => animateCounter(el, raw, ''), i * 120);
+        });
+      }
+    });
+  }, { threshold: 0.4 });
+  const section = document.querySelector('.info-section');
+  if (section) obs.observe(section);
 })();
 </script>
 <script>
@@ -735,15 +914,155 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft' && obStep > 0) obGoTo(obStep - 1);
   if (e.key === 'Escape') obEnd();
 });
-
 /* init */
 (function () {
   obRenderDots();
-  if (!localStorage.getItem('c_tour_seen')) {
+  const params = new URLSearchParams(window.location.search);
+  const forceTour = params.get('tour') === '1';
+  if (forceTour || !localStorage.getItem('c_tour_seen')) {
     const ov = document.getElementById('ob-overlay');
     document.body.style.overflow = 'hidden';
     setTimeout(() => ov.classList.add('active'), 300);
+    /* clean the URL without reloading */
+    if (forceTour) history.replaceState(null, '', window.location.pathname);
   }
+})();
+</script>
+<script>
+/* ── EASTER EGG — click RevisKor 5 times ── */
+(function() {
+  let clicks = 0;
+  let resetTimer = null;
+
+  /* Hint messages that change as you click */
+  const HINTS = [
+    '← do not click this',
+    '← seriously, stop',
+    '← i said don\'t',
+    '← last warning...',
+    '← oh no',
+  ];
+
+  const LINES = [
+    { cls:'dim',   txt:'[sudo] password for student: ••••••••' },
+    { cls:'dim',   txt:'Authenticating...' },
+    { cls:'',      txt:'' },
+    { cls:'red',   txt:'  ACCESS DENIED.' },
+    { cls:'red',   txt:'  Just kidding. You clicked 5 times. That takes commitment.' },
+    { cls:'',      txt:'' },
+    { cls:'green', txt:'reviskor@mansoura-uni:~$ whoami' },
+    { cls:'bold',  txt:'  a student who should probably be studying right now' },
+    { cls:'',      txt:'' },
+    { cls:'green', txt:'reviskor@mansoura-uni:~$ uptime' },
+    { cls:'dim',   txt:'  days until exam: not enough' },
+    { cls:'dim',   txt:'  coffee consumed: yes' },
+    { cls:'dim',   txt:'  panic level:     [########--] 82%' },
+    { cls:'',      txt:'' },
+    { cls:'green', txt:'reviskor@mansoura-uni:~$ cat /etc/reviskor/quote.txt' },
+    { cls:'',      txt:'' },
+    { cls:'quote', txt:'  "The compiler doesn\'t care about your feelings.' },
+    { cls:'quote', txt:'   It only cares about your semicolons.' },
+    { cls:'quote', txt:'   But I do. And I think you\'re going to be fine.' },
+    { cls:'quote', txt:'   You found a hidden terminal in a study website.' },
+    { cls:'quote', txt:'   That\'s exactly the kind of curiosity that makes' },
+    { cls:'quote', txt:'   a good programmer."' },
+    { cls:'',      txt:'' },
+    { cls:'dim',   txt:'                          — RevisKor, 3:14am' },
+    { cls:'',      txt:'' },
+    { cls:'green', txt:'reviskor@mansoura-uni:~$ ls /people-who-made-this/' },
+    { cls:'bold',  txt:'  RevisKor              built this instead of sleeping' },
+    { cls:'',      txt:'' },
+    { cls:'green', txt:'reviskor@mansoura-uni:~$ echo $ADVICE' },
+    { cls:'hi',    txt:'  Close this. Open study.html. Do the arrays section.' },
+    { cls:'hi',    txt:'  You\'ve got this. For real.' },
+    { cls:'',      txt:'' },
+    { cls:'green', txt:'reviskor@mansoura-uni:~$ exit' },
+    { cls:'dim',   txt:'logout' },
+    { cls:'dim',   txt:'[Process completed]  —  press Esc to close' },
+  ];
+
+  function typeLines(body, lines, i) {
+    if (i >= lines.length) {
+      const cur = document.createElement('span');
+      cur.className = 'egg-cursor';
+      body.appendChild(cur);
+      return;
+    }
+    const l = lines[i];
+    const span = document.createElement('span');
+    span.className = 'egg-line' + (l.cls ? ' ' + l.cls : '');
+    span.textContent = l.txt;
+    body.appendChild(span);
+    body.scrollTop = body.scrollHeight;
+    const delay = l.txt === '' ? 30
+      : l.txt.startsWith('  ') ? Math.max(20, Math.min(l.txt.length * 1.2, 80))
+      : Math.max(35, Math.min(l.txt.length * 2, 130));
+    setTimeout(() => typeLines(body, lines, i + 1), delay);
+  }
+
+  window.closeEgg = function() {
+    document.getElementById('egg-terminal').classList.remove('active');
+    document.body.style.overflow = '';
+    /* reset hint */
+    const hint = document.getElementById('egg-hint');
+    if (hint) { hint.textContent = HINTS[0]; }
+    clicks = 0;
+  };
+
+  function openEgg() {
+    const body = document.getElementById('egg-body');
+    body.innerHTML = '';
+    document.getElementById('egg-terminal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => typeLines(body, LINES, 0), 200);
+  }
+
+  /* 5-click trigger on RevisKor name */
+  function handleClick() {
+    clearTimeout(resetTimer);
+    clicks++;
+    const hint = document.getElementById('egg-hint');
+
+    if (clicks >= 5) {
+      clicks = 0;
+      if (hint) hint.textContent = HINTS[0];
+      openEgg();
+      return;
+    }
+
+    if (hint) hint.textContent = HINTS[clicks] || HINTS[HINTS.length - 1];
+
+    /* reset after 3s of no clicks */
+    resetTimer = setTimeout(() => {
+      clicks = 0;
+      if (hint) hint.textContent = HINTS[0];
+    }, 3000);
+  }
+
+  /* Also keep Konami code as a bonus */
+  const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown',
+                  'ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  let seq = [];
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const name = document.getElementById('reviskor-name');
+    const hint = document.getElementById('egg-hint');
+    if (name) name.addEventListener('click', handleClick);
+    if (hint) hint.addEventListener('click', handleClick);
+  });
+
+  document.addEventListener('keydown', function(e) {
+    const ob = document.getElementById('ob-overlay');
+    if (ob && ob.classList.contains('active')) return;
+    const egg = document.getElementById('egg-terminal');
+    if (egg.classList.contains('active')) {
+      if (e.key === 'Escape') closeEgg();
+      return;
+    }
+    seq.push(e.key);
+    if (seq.length > KONAMI.length) seq.shift();
+    if (seq.join(',') === KONAMI.join(',')) { seq = []; openEgg(); }
+  });
 })();
 </script>
 </body>

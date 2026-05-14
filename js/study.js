@@ -1028,18 +1028,74 @@ function showFnType(idx, card) {
     ).join('') +
     `</div>`;
 
-  // Syntax-highlight the code block
-  const raw = fn.code
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/\b(int|float|void|return|char|double)\b/g, '<span class="tp">$1</span>')
-    .replace(/\b(if|else|while|for|do)\b/g, '<span class="kw">$1</span>')
-    .replace(/(printf|scanf|greet|printSum|getScore|add|average)/g, '<span class="fn">$1</span>')
-    .replace(/(".*?")/g, '<span class="str">$1</span>')
-    .replace(/(\/\/.*)/g, '<span class="cm">$1</span>')
-    .replace(/(\/\*.*?\*\/)/gs, '<span class="cm">$1</span>')
-    .replace(/\b(\d+(\.\d+)?f?)\b/g, '<span class="num">$1</span>');
+  // Tokenize the raw code string into highlighted HTML
+  // Works character-by-character so escaping never conflicts with span injection
+  function highlightC(src) {
+    const KW   = ['return','void','int','float','char','double','if','else','while','for','do'];
+    const FNS  = ['printf','scanf','greet','printSum','getScore','add','average'];
+    let out = '', i = 0;
 
-  document.getElementById('fn-code-block').innerHTML = raw;
+    while (i < src.length) {
+      // Line comment
+      if (src[i] === '/' && src[i+1] === '/') {
+        let end = src.indexOf('\n', i);
+        if (end === -1) end = src.length;
+        out += `<span class="cm">${esc2(src.slice(i, end))}</span>`;
+        i = end; continue;
+      }
+      // Block comment
+      if (src[i] === '/' && src[i+1] === '*') {
+        let end = src.indexOf('*/', i + 2);
+        end = end === -1 ? src.length : end + 2;
+        out += `<span class="cm">${esc2(src.slice(i, end))}</span>`;
+        i = end; continue;
+      }
+      // String literal
+      if (src[i] === '"') {
+        let end = i + 1;
+        while (end < src.length && src[end] !== '"') {
+          if (src[end] === '\\') end++; // skip escape
+          end++;
+        }
+        end++;
+        out += `<span class="str">${esc2(src.slice(i, end))}</span>`;
+        i = end; continue;
+      }
+      // Preprocessor directive
+      if (src[i] === '#') {
+        let end = src.indexOf('\n', i);
+        if (end === -1) end = src.length;
+        out += `<span class="kw">${esc2(src.slice(i, end))}</span>`;
+        i = end; continue;
+      }
+      // Word — keyword, function name, or identifier
+      if (/[a-zA-Z_]/.test(src[i])) {
+        let end = i;
+        while (end < src.length && /\w/.test(src[end])) end++;
+        const word = src.slice(i, end);
+        if (KW.includes(word))  out += `<span class="tp">${word}</span>`;
+        else if (FNS.includes(word)) out += `<span class="fn">${word}</span>`;
+        else out += esc2(word);
+        i = end; continue;
+      }
+      // Number
+      if (/\d/.test(src[i])) {
+        let end = i;
+        while (end < src.length && /[\d.f]/.test(src[end])) end++;
+        out += `<span class="num">${esc2(src.slice(i, end))}</span>`;
+        i = end; continue;
+      }
+      // Regular character
+      out += esc2(src[i]);
+      i++;
+    }
+    return out;
+  }
+  function esc2(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  document.getElementById('fn-code-block').innerHTML = highlightC(fn.code);
 
   document.getElementById('fn-detail-tip').innerHTML =
     `<div class="tip"><span>💡</span><div>${fn.tip}</div></div>`;

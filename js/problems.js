@@ -81,10 +81,15 @@ function save(){
 }
 function resetProgress(){
   if(!confirm('Reset all progress and notes?'))return;
-  learned=[];notes={};save();renderList();showToast('Reset complete');
+  learned=[];notes={};
+  _celebrated = false;
+  sessionStorage.removeItem('csg3_cel_session'); /* allow celebration next time they finish */
+  save();renderList();showToast('Reset complete');
 }
 
 /* PROGRESS & STATS */
+let _celebrated = false;
+
 function updateProgress(){
   const pct=Math.round(learned.length/Q.length*100);
   const fill = document.getElementById('prog-fill');
@@ -93,6 +98,23 @@ function updateProgress(){
   if(fill) fill.style.width=pct+'%';
   if(text) text.textContent=learned.length+' / '+Q.length+' learned';
   if(hdr) hdr.textContent=learned.length;
+
+  /* 100% — fires once per session (sessionStorage), picks the right variant */
+  if(pct === 100 && learned.length === Q.length && !_celebrated){
+    /* sessionStorage clears when the tab is closed — perfect "once per session" */
+    if(sessionStorage.getItem('csg3_cel_session')) return;
+    _celebrated = true;
+    sessionStorage.setItem('csg3_cel_session','1');
+    const firstTime = !localStorage.getItem('csg3_celebrated_once');
+    setTimeout(() => {
+      if(firstTime){
+        localStorage.setItem('csg3_celebrated_once','1');
+        showCelebration('first');
+      } else {
+        showCelebration('again');
+      }
+    }, 600);
+  }
 }
 
 function updateStats(){
@@ -499,3 +521,99 @@ updateStats();
 updateProgress();
 renderList();
 setModalMode(modalMode);
+
+/* ═══════════════════════════════════════
+   100% CELEBRATION
+═══════════════════════════════════════ */
+function showCelebration(variant) {
+  const ov = document.getElementById('celebrate-overlay');
+  if (!ov) return;
+
+  /* Swap content based on variant */
+  const icon  = document.getElementById('cel-icon');
+  const title = document.getElementById('cel-title');
+  const sub   = document.getElementById('cel-sub');
+  const quote = document.getElementById('cel-quote');
+
+  if (variant === 'again') {
+    /* Second+ time — quieter, warmer, no confetti */
+    if (icon)  icon.textContent  = '🔁';
+    if (title) title.textContent = 'You did it again.';
+    if (sub)   sub.textContent   = 'Every problem. Again. On purpose.';
+    if (quote) quote.innerHTML   =
+      '"Some people study once and hope for the best.<br>' +
+      'You came back. That\'s a different level of serious.<br>' +
+      'The exam doesn\'t stand a chance."';
+    /* subtle pulse instead of confetti */
+    ov.classList.add('celebrate-again');
+    spawnParticles();
+  } else {
+    /* First time — full confetti */
+    if (icon)  icon.textContent  = '🏆';
+    if (title) title.textContent = 'You finished everything.';
+    if (sub)   sub.textContent   = 'Every single problem. Marked. Done.';
+    if (quote) quote.innerHTML   =
+      '"Most people open the page, scroll a bit, and close it.<br>' +
+      'You actually did the work.<br>' +
+      'That\'s not nothing — that\'s everything."';
+    ov.classList.remove('celebrate-again');
+    spawnConfetti();
+  }
+
+  ov.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCelebration() {
+  const ov = document.getElementById('celebrate-overlay');
+  if (!ov) return;
+  ov.classList.remove('active', 'celebrate-again');
+  document.body.style.overflow = '';
+}
+
+/* Full confetti — first time */
+function spawnConfetti() {
+  const container = document.getElementById('confetti-container');
+  if (!container) return;
+  container.innerHTML = '';
+  const colors = ['#3fb950','#58a6ff','#d29922','#f85149','#bc8cff','#79c0ff'];
+  for (let i = 0; i < 80; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.cssText = [
+      'left:'              + (Math.random() * 100) + '%',
+      'background:'        + colors[Math.floor(Math.random() * colors.length)],
+      'width:'             + (5 + Math.random() * 7) + 'px',
+      'height:'            + (9 + Math.random() * 9) + 'px',
+      'animation-delay:'   + (Math.random() * 1.4) + 's',
+      'animation-duration:'+ (2.2 + Math.random() * 1.8) + 's',
+      'border-radius:'     + (Math.random() > 0.5 ? '50%' : '2px'),
+      'transform:rotate('  + (Math.random() * 360) + 'deg)',
+    ].join(';');
+    container.appendChild(p);
+  }
+}
+
+/* Subtle rising particles — repeat visits */
+function spawnParticles() {
+  const container = document.getElementById('confetti-container');
+  if (!container) return;
+  container.innerHTML = '';
+  const symbols = ['✓','★','✓','◆','✓'];
+  for (let i = 0; i < 28; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece particle-piece';
+    p.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    p.style.cssText = [
+      'left:'              + (5 + Math.random() * 90) + '%',
+      'color:'             + ['#3fb950','#58a6ff','#d29922'][Math.floor(Math.random()*3)],
+      'font-size:'         + (12 + Math.random() * 10) + 'px',
+      'animation-delay:'   + (Math.random() * 1.6) + 's',
+      'animation-duration:'+ (2.8 + Math.random() * 1.4) + 's',
+      'background:transparent',
+      'width:auto','height:auto',
+      'border-radius:0',
+    ].join(';');
+    container.appendChild(p);
+  }
+}

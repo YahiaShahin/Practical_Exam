@@ -33,6 +33,9 @@
       <span></span><span></span><span></span>
     </button>
 
+    <!-- ? button always visible -->
+    <button class="nav-tour-btn" id="nav-tour-btn" title="Show tutorial" aria-label="Show tutorial">?</button>
+
     <!-- nav links + theme — collapses on mobile -->
     <div class="nav-collapse" id="nav-collapse">
       <ul class="nav-links">
@@ -85,8 +88,31 @@
       });
     }
 
-    /* Navbar is position:sticky — it sits in the document flow naturally.
-       No padding needed on any page. The study page sidebar/main offset
-       is handled via CSS (top: 52px on sticky sidebar). */
+    /* Navbar is position:fixed — always visible at top.
+       On non-study pages, add padding-top to body so content
+       starts below the navbar. Study page uses .app layout instead. */
+    if (!document.querySelector('.app')) {
+      const navH = window.innerWidth <= 640 ? 48 : 52;
+      document.body.style.paddingTop = navH + 'px';
+    }
+
+    /* ? tour button */
+    const tourBtn = document.getElementById('nav-tour-btn');
+    if (tourBtn) {
+      tourBtn.addEventListener('click', function () {
+        /* If onboarding overlay exists on this page, reset and reopen it */
+        const ov = document.getElementById('ob-overlay');
+        if (ov) {
+          localStorage.removeItem('c_tour_seen');
+          /* reset to slide 0 */
+          if (typeof obGoTo === 'function') obGoTo(0);
+          document.body.style.overflow = 'hidden';
+          ov.classList.add('active');
+        } else {
+          /* On other pages, go to home with tour flag */
+          window.location.href = 'index.html?tour=1';
+        }
+      });
+    }
   });
 })();

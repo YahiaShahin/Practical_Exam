@@ -11,29 +11,37 @@
 /* ═══════════════ LAYOUT ═══════════════ */
 .app {
   display: flex;
-  flex-direction: column; /* navbar stacks on top, then sidebar+main row below */
+  flex-direction: column;
   min-height: 100vh;
   position: relative;
   z-index: 1;
+  padding-top: 52px; /* push content below the fixed navbar */
 }
 
-/* the injected navbar sits at the top of .app as a full-width block */
+@media (max-width: 640px) {
+  .app { padding-top: 48px; }
+  .sidebar { top: 48px; height: calc(100vh - 48px); }
+}
+
+/* the injected navbar sits fixed — not a flex child */
 .app > .navbar {
   flex-shrink: 0;
   width: 100%;
 }
 
-/* sidebar + main sit in a row below the navbar */
+/* sidebar + main sit in a row */
 .app-body {
   display: flex;
   flex: 1;
-  min-height: 0;
 }
 
 /* sidebar */
 .sidebar {
   width: 220px; flex-shrink: 0;
-  position: sticky; top: 52px; height: calc(100vh - 52px); overflow-y: auto;
+  position: sticky;
+  top: 52px; /* stick just below the fixed navbar */
+  height: calc(100vh - 52px);
+  overflow-y: auto;
   background: var(--bg2); border-right: 1px solid var(--border);
   padding: 24px 0;
   display: flex; flex-direction: column;
@@ -434,18 +442,24 @@ input[type=range]::-webkit-slider-thumb {
   display: flex;
   gap: 20px;
   align-items: flex-start;
-  flex-wrap: wrap;
+}
+/* on wide screens: flowchart left, slider right */
+@media (min-width: 701px) {
+  .if-fc-scroll { flex-shrink: 0; max-width: 55%; }
+  .if-slider-side { flex: 1; }
 }
 .if-fc-scroll {
-  /* Scrollable container for the flowchart on mobile */
+  width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  flex-shrink: 0;
-  max-width: 100%;
+  scrollbar-width: thin;
 }
 .if-slider-side {
-  flex: 1;
-  min-width: 200px;
+  min-width: 0;
+}
+.if-fc-scale-wrap {
+  display: inline-flex;
+  justify-content: flex-start;
 }
 .if-flowchart-wrap {
   display: inline-flex;
@@ -454,32 +468,26 @@ input[type=range]::-webkit-slider-thumb {
   gap: 0;
   font-family: var(--mono);
   font-size: 12px;
-  min-width: 0;
-  padding-bottom: 8px;
-}
-
-/* scale wrapper — clips the scaled height so no gap is left below */
-.if-fc-scale-wrap {
-  display: flex;
-  justify-content: center;
-  overflow: hidden;
+  padding: 8px 16px 16px;
+  white-space: nowrap;
 }
 
 @media (max-width: 700px) {
   .if-demo-wrap { flex-direction: column; gap: 12px; }
-  .if-fc-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .if-slider-side { width: 100%; min-width: 0; }
-  .if-fc-scale-wrap { transform-origin: top center; transform: scale(0.78); }
-  /* shrink the wrapper height to match the scaled content */
-  .if-fc-scale-wrap { height: 78%; }
+  .if-fc-scroll { max-width: 100%; }
+  .if-slider-side { width: 100%; }
+  .if-flowchart-wrap { font-size: 11px; }
 }
-
 @media (max-width: 480px) {
-  .if-fc-scale-wrap { transform: scale(0.62); height: 62%; }
+  .if-flowchart-wrap { font-size: 10px; }
+  .ifc-diamond { width: 110px; }
+  .ifc-body-box { min-width: 110px; font-size: 10px; padding: 5px 10px; }
+  .ifc-start { font-size: 10px; padding: 4px 14px; }
 }
-
 @media (max-width: 360px) {
-  .if-fc-scale-wrap { transform: scale(0.52); height: 52%; }
+  .if-flowchart-wrap { font-size: 9px; }
+  .ifc-diamond { width: 95px; }
+  .ifc-body-box { min-width: 95px; font-size: 9px; }
 }
 .ifc-start, .ifc-end {
   padding: 6px 18px; border-radius: 20px;
