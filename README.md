@@ -28,8 +28,9 @@ A fully client-side, zero-dependency web app for studying and practising C progr
 ├── css/
 │   ├── style.css       # Shared design system — tokens, themes, layout, typography
 │   ├── study.css       # Study page specific styles — flowcharts, demos, loop viz
+|   ├── responive.css   # NEW: This fixes the bug where the pages didnt render well on mobile
 │   └── problems.css    # Problems page specific styles — modal, cards, code panel
-│
+|    
 └── js/
     ├── nav.js          # Navbar injected into all pages
     ├── study.js        # All study page interactivity
@@ -42,7 +43,7 @@ A fully client-side, zero-dependency web app for studying and practising C progr
 ## Features
 
 ### Study Guide (`study.html`)
-- **10 topics** covering the full Mansoura Uni intro syllabus: Syntax → Scopes → Variables → Operators → Printf/Scanf → Conditions → Loops → 1D Arrays → 2D Arrays → Quick Reference
+- **11 topics** covering the full Mansoura Uni intro syllabus: Syntax → Scopes → Variables → Operators → Printf/Scanf → Conditions → Loops → Functions → 1D Arrays → 2D Arrays → Quick Reference
 - **Detailed / Brief toggle** — switch between full mentor-style explanations and TL;DR summaries
 - **Interactive loop flowchart** — step through `for`, `while`, and `do...while` execution phase by phase, with live code highlighting and adjustable From/To parameters that auto-update the code display
 - **Live printf builder** — edit name/score/GPA and watch the C code and terminal output update in real time
