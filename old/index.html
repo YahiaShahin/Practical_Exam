@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intro to Programming - Mansoura University | Prep 2026</title>
+<meta name="description" content="Interactive C programming study guide for Mansoura University Prep 2026 students. Study concepts, practice exam problems, and master C programming.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+<script src="js/nav.js"></script>
+<style>
+/* ── HOME PAGE SPECIFIC ── */
+.hero-home {
+  text-align: center;
+  padding: 5rem 2rem 4rem;
+  position: relative;
+}
+.hero-home::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 500px;
+  background: radial-gradient(ellipse, rgba(136,192,208,.08) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 5px 14px;
+  color: var(--accent);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  animation: fadeUp .5s ease both;
+}
+.hero-home h1 {
+  font-size: clamp(2.2rem, 6vw, 3.8rem);
+  margin-bottom: 1rem;
+  animation: fadeUp .5s ease .1s both;
+}
+.hero-desc {
+  font-size: 1rem;
+  color: var(--muted);
+  max-width: 560px;
+  margin: 0 auto 1rem;
+  line-height: 1.8;
+  animation: fadeUp .5s ease .2s both;
+}
+.hero-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+  animation: fadeUp .5s ease .25s both;
+}
+.hero-meta span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.hero-meta .num-hl {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+/* CTA Cards */
+.cta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.25rem;
+  max-width: 740px;
+  margin: 0 auto 4rem;
+  animation: fadeUp .5s ease .3s both;
+}
+.cta-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 2rem 1.75rem;
+  text-decoration: none;
+  transition: transform .28s cubic-bezier(.22,.61,.36,1), border-color .28s, box-shadow .28s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cta-card:hover {
+  transform: translateY(-4px);
+  text-decoration: none;
+  box-shadow: 0 0 50px var(--bg-ac);
+}
+.cta-card.study-card:hover { border-color: var(--bd-ac); }
+.cta-card.problems-card:hover { border-color: var(--bd-a2); }
+
+.cta-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+.cta-card h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.cta-card p {
+  font-size: .85rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 0;
+}
+.cta-arrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  margin-top: auto;
+  padding-top: 8px;
+  transition: transform .2s;
+}
+.cta-card:hover .cta-arrow { transform: translateX(4px); }
+.cta-card.problems-card .cta-arrow { color: var(--accent2); }
+
+/* Topics preview */
+.topics-preview {
+  max-width: 740px;
+  margin: 0 auto 3rem;
+  animation: fadeUp .5s ease .4s both;
+}
+.topics-preview h3 {
+  text-align: center;
+  margin-bottom: 1.25rem;
+  color: var(--text2);
+}
+.topic-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+.topic-chip {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: transparent;
+  transition: all .2s;
+}
+.topic-chip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* Info section */
+.info-section {
+  max-width: 740px;
+  margin: 0 auto 2rem;
+  text-align: center;
+  animation: fadeUp .5s ease .45s both;
+}
+.info-section h3 {
+  margin-bottom: 1rem;
+  color: var(--text2);
+}
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 1rem;
+}
+.info-item {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--rs);
+  padding: 1rem;
+}
+.info-item .info-num {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+  display: block;
+}
+.info-item .info-label {
+  font-size: .75rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* credits */
+.credits {
+  max-width: 740px;
+  margin: 0 auto;
+  padding: 2rem 0;
+  animation: fadeUp .5s ease .5s both;
+}
+.credits-inner {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 2;
+}
+.credits-inner strong { color: var(--text2); font-weight: 600; }
+.credits-inner .mention { color: var(--accent); }
+
+/* ── RevisKor name animation ── */
+.name-reviskor {
+  display: inline-block;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: .5px;
+  position: relative;
+  cursor: default;
+  /* shimmer gradient that slides across */
+  background: linear-gradient(
+    90deg,
+    var(--text2)   0%,
+    var(--text2)  30%,
+    var(--accent) 45%,
+    #fff          50%,
+    var(--accent) 55%,
+    var(--text2)  70%,
+    var(--text2) 100%
+  );
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: nameShimmer 3s ease 1.2s both;
+}
+.name-reviskor::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -2px;
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: nameUnderline 3s ease 1.2s both;
+}
+.name-reviskor:hover,
+.name-reviskor:active {
+  animation: nameShimmer 1.4s ease forwards;
+}
+.name-reviskor:hover::after,
+.name-reviskor:active::after {
+  animation: nameUnderline 1.4s ease forwards;
+}
+
+@keyframes nameShimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: -50% center; }
+}
+@keyframes nameUnderline {
+  0%   { transform: scaleX(0); opacity: 0; }
+  30%  { opacity: 1; }
+  60%  { transform: scaleX(1); }
+  100% { transform: scaleX(1); opacity: .6; }
+}
+
+/* Guided Tour Modal */
+.tour-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(15,17,21,0.8); z-index: 999;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.tour-overlay.active { opacity: 1; pointer-events: all; }
+.tour-spotlight {
+  position: fixed; background: transparent;
+  box-shadow: 0 0 0 9999px rgba(15,17,21,0.8);
+  border-radius: 8px; z-index: 999;
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  pointer-events: none;
+}
+.tour-tooltip {
+  position: fixed; z-index: 1000; background: var(--card);
+  border: 1px solid var(--accent); border-radius: var(--r);
+  padding: 1.5rem; width: 300px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  opacity: 0; pointer-events: none;
+}
+.tour-tooltip.active { opacity: 1; pointer-events: all; }
+.tour-tooltip h3 { font-size: 1.1rem; color: var(--text); margin-bottom: 0.5rem; }
+.tour-tooltip p { font-size: 0.85rem; color: var(--text2); line-height: 1.6; margin-bottom: 1rem; }
+.tour-actions { display: flex; justify-content: space-between; align-items: center; }
+.tour-btn { background: var(--accent); color: var(--bg); padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 12px; border: none; cursor: pointer; }
+.tour-skip { color: var(--muted); font-size: 11px; cursor: pointer; text-decoration: underline; background: none; border: none; }
+.tour-highlighted { position: relative; z-index: 1000 !important; background: var(--card); }
+
+/* ── ONBOARDING OVERLAY ── */
+.ob-overlay {
+  position: fixed; inset: 0; z-index: 2000;
+  background: rgba(0,0,0,.72);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+  opacity: 0; pointer-events: none;
+  transition: opacity .35s ease;
+}
+.ob-overlay.active { opacity: 1; pointer-events: all; }
+
+.ob-card {
+  background: var(--card);
+  border: 1px solid var(--border-hi);
+  border-radius: 20px;
+  width: 100%; max-width: 520px;
+  padding: 2.5rem 2.25rem 2rem;
+  box-shadow: 0 32px 80px rgba(0,0,0,.45);
+  position: relative;
+  overflow: hidden;
+}
+/* accent glow strip at top */
+.ob-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 20px 20px 0 0;
+}
+
+/* slide container */
+.ob-slides { position: relative; min-height: 260px; }
+.ob-slide {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; gap: 14px;
+  opacity: 0; transform: translateX(40px);
+  transition: opacity .32s ease, transform .32s ease;
+  pointer-events: none;
+}
+.ob-slide.active {
+  opacity: 1; transform: translateX(0);
+  pointer-events: all; position: relative;
+}
+.ob-slide.exit {
+  opacity: 0; transform: translateX(-40px);
+  position: absolute;
+}
+
+.ob-icon {
+  font-size: 3rem; line-height: 1;
+  filter: drop-shadow(0 0 18px var(--accent));
+}
+.ob-slide-title {
+  font-family: var(--font-display);
+  font-size: 1.35rem; font-weight: 800;
+  color: var(--text); line-height: 1.2;
+}
+.ob-slide-desc {
+  font-size: .88rem; color: var(--text2);
+  line-height: 1.75; max-width: 400px;
+}
+.ob-slide-desc strong { color: var(--accent); }
+.ob-slide-desc code {
+  font-family: var(--font-mono); font-size: .8rem;
+  background: var(--bg-ac); padding: 1px 6px;
+  border-radius: 4px; color: var(--accent);
+}
+
+/* feature pill row */
+.ob-pills {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  justify-content: center; margin-top: 4px;
+}
+.ob-pill {
+  font-family: var(--font-mono); font-size: 10px;
+  padding: 4px 12px; border-radius: 20px;
+  border: 1px solid var(--border);
+  color: var(--muted); background: var(--bg2);
+}
+.ob-pill.hi { border-color: var(--bd-ac); color: var(--accent); background: var(--bg-ac); }
+
+/* footer: dots + buttons */
+.ob-footer {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  margin-top: 2rem; gap: 12px;
+}
+.ob-dots { display: flex; gap: 6px; align-items: center; }
+.ob-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--border); transition: all .25s;
+  cursor: pointer;
+}
+.ob-dot.active {
+  background: var(--accent);
+  width: 20px; border-radius: 4px;
+}
+.ob-actions { display: flex; gap: 8px; align-items: center; }
+.ob-skip {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--muted); background: none; border: none;
+  cursor: pointer; padding: 4px 8px;
+  transition: color .2s;
+}
+.ob-skip:hover { color: var(--text); }
+.ob-btn {
+  font-family: var(--font-mono); font-size: 11px;
+  padding: 9px 22px; border-radius: 20px;
+  border: none; cursor: pointer;
+  background: var(--accent); color: #000;
+  font-weight: 700; letter-spacing: .5px;
+  transition: all .2s;
+}
+.ob-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.ob-btn.finish {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff;
+}
+
+@media (max-width: 480px) {
+  .ob-card { padding: 2rem 1.25rem 1.5rem; }
+  .ob-slide-title { font-size: 1.15rem; }
+  .ob-slides { min-height: 290px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR injected by nav.js -->
+
+<!-- HERO -->
+<div class="hero-home">
+  <div class="hero-badge">Mansoura University - Prep 2026</div>
+  <h1>Introduction to<br><em>C Programming</em></h1>
+  <p class="hero-desc">
+    A comprehensive summary of everything we've studied this term in Intro to Programming.
+    Study the concepts, practice with exam-style problems, and master C before your practical exam.
+  </p>
+  <div class="hero-meta">
+    <span><span class="num-hl" id="hero-topics">10</span> Topics Covered</span>
+    <span><span class="num-hl" id="hero-probs">20</span> Practice Problems</span>
+    <span><span class="num-hl">100%</span> Interactive</span>
+  </div>
+</div>
+
+<!-- CTA CARDS -->
+<div class="page">
+  <div class="cta-grid">
+    <a href="study.html" class="cta-card study-card">
+      <span class="cta-icon">📖</span>
+      <h2>Study Guide</h2>
+      <p>
+        Learn C programming step by step - from basic syntax and variables to loops, functions, and arrays.
+        Detailed explanations with interactive examples.
+      </p>
+      <span class="cta-arrow">Start learning --></span>
+    </a>
+    <a href="problems.html" class="cta-card problems-card">
+      <span class="cta-icon">🧪</span>
+      <h2>Practice Problems</h2>
+      <p>
+        20 exam-style C problems with deep explanations, line-by-line code breakdowns,
+        interactive "Try It" panels, and progress tracking.
+      </p>
+      <span class="cta-arrow">Start practicing --></span>
+    </a>
+  </div>
+
+  <!-- TOPICS PREVIEW -->
+  <div class="topics-preview">
+    <h3>What You'll Learn</h3>
+    <div class="topic-chips">
+      <span class="topic-chip">Syntax Basics</span>
+      <span class="topic-chip">Variables & Types</span>
+      <span class="topic-chip">Printf & Scanf</span>
+      <span class="topic-chip">Operators</span>
+      <span class="topic-chip">If / Else</span>
+      <span class="topic-chip">Switch-Case</span>
+      <span class="topic-chip">For Loops</span>
+      <span class="topic-chip">While & Do-While</span>
+      <span class="topic-chip">Functions</span>
+      <span class="topic-chip">1D Arrays</span>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="info-section">
+    <h3>Course Overview</h3>
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="info-num" id="info-topics">10</span>
+        <span class="info-label">Topics</span>
+      </div>
+      <div class="info-item">
+        <span class="info-num" id="info-probs">20</span>
+        <span class="info-label">Problems</span>
+      </div>
+      <div class="info-item">
+        <span class="info-num">50+</span>
+        <span class="info-label">Code Examples</span>
+      </div>
+      <div class="info-item">
+        <span class="info-num">C89</span>
+        <span class="info-label">Standard</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CREDITS -->
+  <div class="footer">
+    <div class="credits-inner">
+      <p>
+        Built by <span class="name-reviskor">RevisKor</span><br>
+        Special mention to <span class="mention">Comrade General Ice Cube</span>
+        & <span class="mention">Marwan Elmoghazy</span>
+      </p>
+    </div>
+  </div>
+  <!-- ONBOARDING OVERLAY -->
+  <div class="ob-overlay" id="ob-overlay">
+    <div class="ob-card">
+      <div class="ob-slides" id="ob-slides">
+
+        <!-- Slide 0: Welcome -->
+        <div class="ob-slide active" id="ob-slide-0">
+          <div class="ob-icon">👋</div>
+          <div class="ob-slide-title">Welcome to C Prep 2026</div>
+          <div class="ob-slide-desc">
+            Your interactive study platform for Mansoura University's Intro to Programming course.
+            Everything you need to ace the practical exam — in one place.
+          </div>
+          <div class="ob-pills">
+            <span class="ob-pill hi">50+ Problems</span>
+            <span class="ob-pill hi">10 Topics</span>
+            <span class="ob-pill hi">100% Interactive</span>
+          </div>
+        </div>
+
+        <!-- Slide 1: Study Guide -->
+        <div class="ob-slide" id="ob-slide-1">
+          <div class="ob-icon">📖</div>
+          <div class="ob-slide-title">Interactive Study Guide</div>
+          <div class="ob-slide-desc">
+            10 topics from syntax to arrays — each with <strong>live demos</strong>, step-through loop flowcharts,
+            a live printf builder, scope visualiser, and array inspector.
+            Click anything. Drag sliders. Watch it run.
+          </div>
+          <div class="ob-pills">
+            <span class="ob-pill">Loop Flowchart</span>
+            <span class="ob-pill">Printf Builder</span>
+            <span class="ob-pill">Array Inspector</span>
+            <span class="ob-pill">Scope Visualiser</span>
+          </div>
+        </div>
+
+        <!-- Slide 2: Problems -->
+        <div class="ob-slide" id="ob-slide-2">
+          <div class="ob-icon">🧪</div>
+          <div class="ob-slide-title">Practice Problems</div>
+          <div class="ob-slide-desc">
+            50+ exam-style problems with full explanations, line-by-line code breakdowns,
+            common mistakes, and a <strong>Try It</strong> panel that simulates the program live.
+            Track what you've learned with the progress bar.
+          </div>
+          <div class="ob-pills">
+            <span class="ob-pill">Code Breakdown</span>
+            <span class="ob-pill hi">Try It Live</span>
+            <span class="ob-pill">Progress Tracking</span>
+            <span class="ob-pill">Personal Notes</span>
+          </div>
+        </div>
+
+        <!-- Slide 3: Brief / Detailed -->
+        <div class="ob-slide" id="ob-slide-3">
+          <div class="ob-icon">⚡</div>
+          <div class="ob-slide-title">Brief &amp; Detailed Modes</div>
+          <div class="ob-slide-desc">
+            Both the Study Guide and Problems page have a <strong>Detailed / Brief</strong> toggle.
+            Detailed gives you full mentor-style explanations.
+            Brief strips it down to just the code, tip, and output — perfect for a quick revision pass.
+          </div>
+          <div class="ob-pills">
+            <span class="ob-pill hi">Detailed — full explanations</span>
+            <span class="ob-pill">⚡ Brief — quick refresh</span>
+          </div>
+        </div>
+
+        <!-- Slide 4: Themes -->
+        <div class="ob-slide" id="ob-slide-4">
+          <div class="ob-icon">🎨</div>
+          <div class="ob-slide-title">7 Themes, Your Choice</div>
+          <div class="ob-slide-desc">
+            Pick a theme from the navbar dropdown — it's saved automatically.
+            Light themes like <strong>Paper</strong> and Latte work great in daylight.
+            Dark themes like Nord, Neon Synth, and Midnight Gold are easier on the eyes at night.
+          </div>
+          <div class="ob-pills">
+            <span class="ob-pill hi">Paper (default)</span>
+            <span class="ob-pill">Latte</span>
+            <span class="ob-pill">Nord</span>
+            <span class="ob-pill">Neon Synth</span>
+            <span class="ob-pill">Midnight Gold</span>
+          </div>
+        </div>
+
+        <!-- Slide 5: Ready -->
+        <div class="ob-slide" id="ob-slide-5">
+          <div class="ob-icon">🚀</div>
+          <div class="ob-slide-title">You're All Set</div>
+          <div class="ob-slide-desc">
+            Start with the <strong>Study Guide</strong> to build your understanding,
+            then move to <strong>Practice Problems</strong> to test yourself.
+            Use <code>← →</code> arrow keys to navigate between problems, and <code>/</code> to search.
+            Good luck on your exam!
+          </div>
+          <div class="ob-pills">
+            <span class="ob-pill">← → navigate problems</span>
+            <span class="ob-pill">/ to search</span>
+            <span class="ob-pill">Esc to close</span>
+          </div>
+        </div>
+
+      </div><!-- /ob-slides -->
+
+      <div class="ob-footer">
+        <div class="ob-dots" id="ob-dots"></div>
+        <div class="ob-actions">
+          <button class="ob-skip" id="ob-skip" onclick="obEnd()">Skip</button>
+          <button class="ob-btn" id="ob-next" onclick="obNext()">Next →</button>
+        </div>
+      </div>
+    </div>
+  </div><!-- /ob-overlay -->
+
+<script src="js/problems-data.js"></script>
+<script>
+/* Dynamic Stats */
+(function(){
+  if (typeof Q !== 'undefined') {
+    const topicCount = new Set(Q.map(q => q.tag)).size;
+    const probCount = Q.length;
+    
+    document.getElementById('hero-topics').textContent = topicCount;
+    document.getElementById('hero-probs').textContent = probCount;
+    document.getElementById('info-topics').textContent = topicCount;
+    document.getElementById('info-probs').textContent = probCount;
+  }
+})();
+</script>
+<script>
+/* Guided Tour — replaced by onboarding overlay */
+const steps = [];
+function endTour(){}
+function nextTourStep(){}
+</script>
+<script>
+/* ── ONBOARDING ── */
+const OB_TOTAL = 6;
+let obStep = 0;
+
+function obRenderDots() {
+  const c = document.getElementById('ob-dots');
+  c.innerHTML = '';
+  for (let i = 0; i < OB_TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'ob-dot' + (i === obStep ? ' active' : '');
+    d.onclick = () => obGoTo(i);
+    c.appendChild(d);
+  }
+}
+
+function obGoTo(n) {
+  const prev = document.getElementById('ob-slide-' + obStep);
+  if (prev) { prev.classList.remove('active'); prev.classList.add('exit'); setTimeout(() => prev.classList.remove('exit'), 350); }
+  obStep = n;
+  const next = document.getElementById('ob-slide-' + obStep);
+  if (next) { next.classList.add('active'); }
+  obRenderDots();
+  const btn = document.getElementById('ob-next');
+  const skip = document.getElementById('ob-skip');
+  if (obStep === OB_TOTAL - 1) {
+    btn.textContent = 'Get Started ✓';
+    btn.classList.add('finish');
+    skip.style.display = 'none';
+  } else {
+    btn.textContent = 'Next →';
+    btn.classList.remove('finish');
+    skip.style.display = '';
+  }
+}
+
+function obNext() {
+  if (obStep >= OB_TOTAL - 1) { obEnd(); return; }
+  obGoTo(obStep + 1);
+}
+
+function obEnd() {
+  const ov = document.getElementById('ob-overlay');
+  ov.style.opacity = '0';
+  setTimeout(() => { ov.classList.remove('active'); ov.style.opacity = ''; }, 350);
+  localStorage.setItem('c_tour_seen', 'true');
+  document.body.style.overflow = '';
+}
+
+/* keyboard nav inside onboarding */
+document.addEventListener('keydown', e => {
+  const ov = document.getElementById('ob-overlay');
+  if (!ov.classList.contains('active')) return;
+  if (e.key === 'ArrowRight' || e.key === 'Enter') obNext();
+  if (e.key === 'ArrowLeft' && obStep > 0) obGoTo(obStep - 1);
+  if (e.key === 'Escape') obEnd();
+});
+
+/* init */
+(function () {
+  obRenderDots();
+  if (!localStorage.getItem('c_tour_seen')) {
+    const ov = document.getElementById('ob-overlay');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => ov.classList.add('active'), 300);
+  }
+})();
+</script>
+</body>
+</html>

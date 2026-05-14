@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C Programming — Interactive Study Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/study.css">
+<script src="js/nav.js"></script>
+</head>
+<body>
+<div class="app">
+
+<!-- NAVBAR injected by nav.js -->
+
+<!-- SIDEBAR -->
+<nav class="sidebar" style="margin-top:52px;">
+  <div class="sidebar-brand">
+    <div class="logo">C Guide</div>
+    <div class="sub">Mansoura Uni · 2026</div>
+  </div>
+  <a class="nav-item" href="#s1"><span class="nav-num">01</span> Syntax Basics</a>
+  <a class="nav-item" href="#s2"><span class="nav-num">02</span> Scopes</a>
+  <a class="nav-item" href="#s3"><span class="nav-num">03</span> Variables</a>
+  <a class="nav-item" href="#s4"><span class="nav-num">04</span> Operators</a>
+  <a class="nav-item" href="#s5"><span class="nav-num">05</span> Printf / Scanf</a>
+  <a class="nav-item" href="#s6"><span class="nav-num">06</span> Conditions</a>
+  <a class="nav-item" href="#s7"><span class="nav-num">07</span> Loops</a>
+  <a class="nav-item" href="#s8"><span class="nav-num">08</span> 1D Arrays</a>
+  <a class="nav-item" href="#s9"><span class="nav-num">09</span> 2D Arrays</a>
+  <a class="nav-item" href="#s10"><span class="nav-num">10</span> Quick Reference</a>
+  <div class="sidebar-progress">
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="prog-label" id="prog-label">0 / 10 viewed</div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main" style="margin-top:52px;">
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="mode-toggle">
+    <span class="mode-lbl on" id="lbl-det" onclick="setMode('detailed')">Detailed</span>
+    <div class="tog" id="tog" onclick="toggleMode()"><div class="tog-dot"></div></div>
+    <span class="mode-lbl" id="lbl-brief" onclick="setMode('brief')">Brief</span>
+  </div>
+  <div class="eyebrow">Mansoura University · Intro to Programming</div>
+  <h1>C Programming<br><em>Study Guide</em></h1>
+  <p>10 topics from syntax to arrays — each with interactive demos, flowcharts, and mentor-style explanations. Click anything, drag sliders, step through loops.</p>
+</div>
+
+<!-- ═══ S1: SYNTAX ═══ -->
+<section class="section" id="s1">
+  <div class="section-header"><span class="section-num">01</span><h2>Syntax Basics</h2></div>
+  <p class="prose">C is a <strong>compiled language</strong> — you write code, a compiler translates it to machine instructions, then it runs. Every statement must end with <code>;</code>, and every program must have exactly one <code>main()</code> function as the entry point.</p>
+
+  <div class="demo">
+    <div class="demo-label">Anatomy of a minimal C program</div>
+    <div class="anatomy-wrap">
+      <div class="anatomy-code"><span class="cb" style="margin:0;padding:0;border:none;background:transparent"><span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>    <span class="cm">← ①</span>
+
+<span class="tp">int</span> <span class="fn">main</span>() {          <span class="cm">← ②</span>
+    <span class="cm">/* your code */</span>
+    <span class="kw">return</span> <span class="num">0</span>;           <span class="cm">← ③</span>
+}</span></div>
+      <div class="anatomy-notes">
+        <div class="anatomy-title">What each part does</div>
+        <div class="anatomy-item"><span class="anatomy-num">①</span> Include the standard I/O library so you can use <code>printf</code> and <code>scanf</code></div>
+        <div class="anatomy-item"><span class="anatomy-num">②</span> <code>main()</code> is where execution starts — every C program has exactly one</div>
+        <div class="anatomy-item"><span class="anatomy-num">③</span> Return <code>0</code> to tell the OS the program succeeded</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="prose"><strong>Comments</strong> are ignored by the compiler entirely. They exist for humans reading the code.</p>
+  <div class="cb"><span class="cm">// Single-line comment — from // to end of line</span>
+
+<span class="cm">/* Multi-line comment
+   spans as many lines as you want */</span>
+
+<span class="tp">int</span> x = <span class="num">5</span>; <span class="cm">// inline comment after a statement</span></div>
+
+  <div class="tip"><span>💡</span><div>The <strong>semicolon</strong> is the most commonly forgotten character in C. Every statement (assignment, function call, declaration) needs one. Braces <code>{}</code> do <em>not</em> need semicolons.</div></div>
+</section>
+
+<!-- ═══ S2: SCOPES ═══ -->
+<section class="section" id="s2">
+  <div class="section-header"><span class="section-num">02</span><h2>Scopes</h2></div>
+  <p class="prose">Curly braces <code>{}</code> define <strong>scopes</strong> — isolated regions of code. A variable declared inside a scope only exists inside it. A child scope can see its parent's variables, but a parent cannot reach into a child, and siblings are completely blind to each other.</p>
+
+  <!-- Scope chain diagram -->
+  <div class="demo">
+    <div class="demo-label">Scope chain — how visibility works upward</div>
+    <div class="scope-chain-diagram">
+      <div class="scd-box" style="border-color:var(--cyan)">
+        <div class="scd-label" style="color:var(--cyan)">ScopeA (main)</div>
+        <div style="color:var(--text2)">int a = 1</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px">visible to: A only</div>
+      </div>
+      <div class="scd-arrow">→</div>
+      <div class="scd-box" style="border-color:#3a8fc7">
+        <div class="scd-label" style="color:#3a8fc7">ScopeB (child of A)</div>
+        <div style="color:var(--text2)">int b = 2, e = 5</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px">sees: a, b, e</div>
+      </div>
+      <div class="scd-arrow">→</div>
+      <div class="scd-box" style="border-color:#5ecb8e">
+        <div class="scd-label" style="color:#5ecb8e">ScopeC (child of B)</div>
+        <div style="color:var(--text2)">int c = 3</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px">sees: a, b, c</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--text3);margin-top:4px;font-family:var(--mono)">Chain goes <strong style="color:var(--cyan)">upward only</strong>. ScopeA cannot see b, c, or d. Siblings (C and D) cannot see each other.</div>
+  </div>
+
+  <div class="demo">
+    <div class="demo-label">Interactive — click any scope to see what it can access</div>
+    <div id="scope-boxes" style="padding:4px 0">
+      <div class="scope-box" id="sb-A" onclick="selectScope('A')">
+        <div class="sb-label" style="color:#c07a20">ScopeA — main()</div>
+        <div class="sb-vars">
+          <span class="scope-var" data-var="a">int a = 1</span>
+        </div>
+        <div style="margin-top:8px;padding:8px">
+          <div class="scope-box" id="sb-B" onclick="event.stopPropagation();selectScope('B')">
+            <div class="sb-label" style="color:#3a8fc7">ScopeB</div>
+            <div class="sb-vars">
+              <span class="scope-var" data-var="b">int b = 2</span>
+              <span class="scope-var" data-var="e">int e = 5</span>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <div style="flex:1;padding:8px">
+                <div class="scope-box" id="sb-C" onclick="event.stopPropagation();selectScope('C')">
+                  <div class="sb-label" style="color:#5ecb8e">ScopeC</div>
+                  <div class="sb-vars"><span class="scope-var" data-var="c">int c = 3</span></div>
+                </div>
+              </div>
+              <div style="flex:1;padding:8px">
+                <div class="scope-box" id="sb-D" onclick="event.stopPropagation();selectScope('D')">
+                  <div class="sb-label" style="color:#b48ead">ScopeD</div>
+                  <div class="sb-vars"><span class="scope-var" data-var="d">int d = 4</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="scope-result" id="scope-result">↑ Click any scope to see what it can access</div>
+  </div>
+
+  <div class="warn"><span>⚠</span><div>A variable declared inside a scope is <strong>destroyed</strong> when that scope closes (<code>}</code>). Try to use it outside and the compiler refuses. This is called <em>scope lifetime</em>.</div></div>
+</section>
+
+<!-- ═══ S3: VARIABLES ═══ -->
+<section class="section" id="s3">
+  <div class="section-header"><span class="section-num">03</span><h2>Variables &amp; Data Types</h2></div>
+  <p class="prose">A variable is a named box in memory. C is <strong>statically typed</strong> — you must declare the type before using it. The compiler uses the type to know how many bytes to reserve and what operations are valid.</p>
+
+  <table class="dtable">
+    <thead><tr><th>Type</th><th>Stores</th><th>Size</th><th>Example</th><th>Gotcha</th></tr></thead>
+    <tbody>
+      <tr><td>int</td><td>whole numbers</td><td>4 bytes</td><td><code>int x = 42;</code></td><td>No decimals — 12.9 stored as 12</td></tr>
+      <tr><td>float</td><td>decimals ~7 digits</td><td>4 bytes</td><td><code>float f = 3.14f;</code></td><td>Needs trailing <code>f</code> for float literal</td></tr>
+      <tr><td>double</td><td>decimals ~15 digits</td><td>8 bytes</td><td><code>double d = 3.14;</code></td><td>Default for decimal literals in C</td></tr>
+      <tr><td>char</td><td>single character</td><td>1 byte</td><td><code>char c = 'A';</code></td><td>Stored as integer (A=65). Single quotes only.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="demo">
+    <div class="demo-label">Memory model — what variables look like in RAM</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:12px">
+      <div style="text-align:center">
+        <div style="color:var(--text3);margin-bottom:6px">int age = 21</div>
+        <div style="display:flex;gap:0">
+          <div style="width:36px;height:36px;border:1px solid var(--border2);background:var(--cyan-dim);display:flex;align-items:center;justify-content:center;color:var(--cyan);font-weight:700">21</div>
+          <div style="width:36px;height:36px;border:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;justify-content:center;color:var(--text3)">·</div>
+          <div style="width:36px;height:36px;border:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;justify-content:center;color:var(--text3)">·</div>
+          <div style="width:36px;height:36px;border:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;justify-content:center;color:var(--text3)">·</div>
+        </div>
+        <div style="color:var(--text3);margin-top:4px">4 bytes total</div>
+      </div>
+      <div style="text-align:center">
+        <div style="color:var(--text3);margin-bottom:6px">char grade = 'A'</div>
+        <div style="display:flex;gap:0">
+          <div style="width:36px;height:36px;border:1px solid var(--gold);background:var(--gold-dim);display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:700">65</div>
+        </div>
+        <div style="color:var(--text3);margin-top:4px">1 byte ('A'=65)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cb"><span class="tp">int</span>    age   = <span class="num">21</span>;
+<span class="tp">float</span>  gpa   = <span class="num">3.7f</span>;
+<span class="tp">double</span> pi    = <span class="num">3.14159265358979</span>;
+<span class="tp">char</span>   grade = <span class="str">'A'</span>;
+
+<span class="cm">// declare multiple of same type at once</span>
+<span class="tp">int</span> x = <span class="num">1</span>, y = <span class="num">2</span>, z = <span class="num">3</span>;</div>
+  <div class="tip"><span>💡</span><div>Assigning <code>float gpa = 3.7;</code> without the <code>f</code> suffix gives a warning — the literal <code>3.7</code> is a <code>double</code> being narrowed to <code>float</code>. Write <code>3.7f</code> to be explicit.</div></div>
+</section>
+
+<!-- ═══ S4: OPERATORS ═══ -->
+<section class="section" id="s4">
+  <div class="section-header"><span class="section-num">04</span><h2>Operators &amp; Arithmetic</h2></div>
+  <p class="prose">Click any operator card for a detailed explanation and code example. Then use the live calculator to see exactly how C handles the math — especially the integer division quirk that catches everyone.</p>
+
+  <div class="ops-grid">
+    <div class="op-card" onclick="pickOp(this,'+')"><span class="op-sym">+</span><span class="op-name">addition</span><div class="op-ex">5 + 3 = 8</div></div>
+    <div class="op-card" onclick="pickOp(this,'-')"><span class="op-sym">-</span><span class="op-name">subtraction</span><div class="op-ex">10 − 4 = 6</div></div>
+    <div class="op-card" onclick="pickOp(this,'*')"><span class="op-sym">*</span><span class="op-name">multiply</span><div class="op-ex">3 × 7 = 21</div></div>
+    <div class="op-card" onclick="pickOp(this,'/')"><span class="op-sym">/</span><span class="op-name">division ⚠</span><div class="op-ex">7 / 2 = 3</div></div>
+    <div class="op-card" onclick="pickOp(this,'%')"><span class="op-sym">%</span><span class="op-name">modulus</span><div class="op-ex">7 % 3 = 1</div></div>
+    <div class="op-card" onclick="pickOp(this,'++')"><span class="op-sym">++</span><span class="op-name">increment</span><div class="op-ex">x++ / ++x</div></div>
+    <div class="op-card" onclick="pickOp(this,'--')"><span class="op-sym">--</span><span class="op-name">decrement</span><div class="op-ex">x-- / --x</div></div>
+    <div class="op-card" onclick="pickOp(this,'+=')"><span class="op-sym">+=</span><span class="op-name">compound</span><div class="op-ex">x += 3</div></div>
+  </div>
+
+  <div id="op-demo" class="demo">
+    <div class="demo-label" id="op-title">Example</div>
+    <div id="op-why" class="op-why-box"></div>
+    <div id="op-note" class="op-note-box" style="display:none"></div>
+    <div class="cb" id="op-code" style="margin:0"></div>
+  </div>
+
+  <p class="prose" style="margin-top:1.2rem"><strong>Live C calculator</strong> — try integer division:</p>
+  <div class="calc-wrap">
+    <input class="calc-input" type="number" id="ca" value="10" oninput="doCalc()">
+    <select class="calc-op" id="cop" onchange="doCalc()">
+      <option>+</option><option>-</option><option value="*">*</option><option>/</option><option>%</option>
+    </select>
+    <input class="calc-input-b" type="number" id="cb2" value="3" oninput="doCalc()">
+    <span class="calc-eq">=</span>
+    <div class="calc-res" id="cres">13</div>
+  </div>
+  <div class="calc-note" id="cnote"></div>
+
+  <p class="prose" style="margin-top:1.2rem"><strong>Operator precedence</strong> — higher wins, same level goes left to right:</p>
+  <div class="cb"><span class="cm">// Priority (high → low)</span>
+<span class="cm">// 1.  ++ -- (pre)   e.g. ++x</span>
+<span class="cm">// 2.  * / %         left-to-right</span>
+<span class="cm">// 3.  + -           left-to-right</span>
+<span class="cm">// Use () to override</span>
+
+<span class="tp">int</span> x = <span class="num">5</span> % <span class="num">2</span> * <span class="num">3</span> / <span class="num">2</span>;
+<span class="cm">// 5%2=1 → 1*3=3 → 3/2=1  →  x = 1</span></div>
+</section>
+
+<!-- ═══ S5: PRINTF / SCANF ═══ -->
+<section class="section" id="s5">
+  <div class="section-header"><span class="section-num">05</span><h2>Printf &amp; Scanf</h2></div>
+  <p class="prose"><code>printf</code> outputs formatted text to the terminal. <code>scanf</code> reads typed input. Both use <strong>format specifiers</strong> as typed placeholders that must exactly match the variable type.</p>
+
+  <div class="demo">
+    <div class="demo-label">Live printf builder — edit values and watch code + output update</div>
+    <div class="pf-input-row">
+      <label>name =</label>
+      <input type="text" id="pf-name" value="Ahmed" style="width:100px" oninput="buildPrintf()">
+      <label>score =</label>
+      <input type="number" id="pf-score" value="87" style="width:72px" oninput="buildPrintf()">
+      <label>gpa =</label>
+      <input type="number" id="pf-gpa" value="3.75" step="0.01" style="width:80px" oninput="buildPrintf()">
+    </div>
+    <div class="cb" id="pf-code" style="margin:0 0 10px"></div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Terminal Output</div>
+    <div class="terminal" id="pf-output"></div>
+  </div>
+
+  <div style="margin:14px 0">
+    <div class="fmt-row"><span class="fmt-spec">%d</span><span class="fmt-arrow">→</span><span class="fmt-type">integer (int)</span></div>
+    <div class="fmt-row"><span class="fmt-spec">%f</span><span class="fmt-arrow">→</span><span class="fmt-type">float/double — default 6 decimal places</span></div>
+    <div class="fmt-row"><span class="fmt-spec">%.2f</span><span class="fmt-arrow">→</span><span class="fmt-type">float with exactly 2 decimal places</span></div>
+    <div class="fmt-row"><span class="fmt-spec">%c</span><span class="fmt-arrow">→</span><span class="fmt-type">single char</span></div>
+    <div class="fmt-row"><span class="fmt-spec">%s</span><span class="fmt-arrow">→</span><span class="fmt-type">string (char array)</span></div>
+    <div class="fmt-row"><span class="fmt-spec">\n</span><span class="fmt-arrow">→</span><span class="fmt-type">newline — printf won't add one automatically</span></div>
+  </div>
+
+  <div class="cb"><span class="cm">// scanf reads INTO a variable's memory address</span>
+<span class="tp">int</span>  n; <span class="tp">char</span> c; <span class="tp">float</span> f;
+<span class="fn">scanf</span>(<span class="str">"%d"</span>, &amp;n);    <span class="cm">// &amp; gives the address of n</span>
+<span class="fn">scanf</span>(<span class="str">"%f"</span>, &amp;f);
+<span class="fn">scanf</span>(<span class="str">" %c"</span>, &amp;c);  <span class="cm">// space before %c skips leftover newline</span></div>
+
+  <div class="warn"><span>⚠</span><div>Always put a space before <code>%c</code> in scanf (<code>" %c"</code>). Without it, scanf reads the leftover <code>\n</code> from the previous Enter press and your char gets garbage.</div></div>
+</section>
+
+<!-- ═══ S6: CONDITIONS ═══ -->
+<section class="section" id="s6">
+  <div class="section-header"><span class="section-num">06</span><h2>Conditions &amp; If Statements</h2></div>
+  <p class="prose">Comparisons in C evaluate to <strong>1 (true)</strong> or <strong>0 (false)</strong>. The <code>if / else if / else</code> chain is evaluated top-to-bottom — the first true condition runs its block and <em>all others are skipped</em>.</p>
+
+  <!-- If/else flowchart -->
+  <div class="demo">
+    <div class="demo-label">How if/else chains work — control flow diagram</div>
+    <div class="if-demo-wrap">
+      <div class="if-fc-scroll">
+        <div class="if-flowchart-wrap" style="min-width:160px">
+        <div class="ifc-start">Start</div>
+        <div class="fc-arr-v"></div>
+        <div class="ifc-diamond" id="ifc-d0">
+          <svg viewBox="0 0 130 60"><polygon points="65,4 126,30 65,56 4,30" fill="rgba(77,217,192,.08)" stroke="#2a3048" stroke-width="1.5"/></svg>
+          <span>score ≥ 90?</span>
+        </div>
+        <div style="display:flex;gap:4px;align-items:flex-start">
+          <div style="display:flex;flex-direction:column;align-items:center">
+            <div class="ifc-yes" style="margin-bottom:0">YES</div>
+            <div class="fc-arr-v"></div>
+            <div class="ifc-body-box" id="ifc-b0">Grade A</div>
+            <div class="fc-arr-v" style="margin-top:6px; margin-bottom:2px"></div>
+            <div style="font-size:9px;color:var(--text3)">(to End)</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;margin-left:12px">
+            <div class="ifc-no" style="margin-bottom:0">NO</div>
+            <div class="fc-arr-v"></div>
+            <div class="ifc-diamond" id="ifc-d1" style="margin:4px 0">
+              <svg viewBox="0 0 130 60"><polygon points="65,4 126,30 65,56 4,30" fill="rgba(77,217,192,.08)" stroke="#2a3048" stroke-width="1.5"/></svg>
+              <span>score ≥ 75?</span>
+            </div>
+            <div style="display:flex;gap:4px;align-items:flex-start">
+              <div style="display:flex;flex-direction:column;align-items:center">
+                <div class="ifc-yes" style="margin-bottom:0">YES</div>
+                <div class="fc-arr-v"></div>
+                <div class="ifc-body-box" id="ifc-b1">Grade B</div>
+                <div class="fc-arr-v" style="margin-top:6px; margin-bottom:2px"></div>
+                <div style="font-size:9px;color:var(--text3)">(to End)</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;margin-left:12px">
+                <div class="ifc-no" style="margin-bottom:0">NO</div>
+                <div class="fc-arr-v"></div>
+                <div class="ifc-diamond" id="ifc-d2" style="margin:4px 0">
+                  <svg viewBox="0 0 130 60"><polygon points="65,4 126,30 65,56 4,30" fill="rgba(77,217,192,.08)" stroke="#2a3048" stroke-width="1.5"/></svg>
+                  <span>score ≥ 60?</span>
+                </div>
+                <div style="display:flex;gap:4px">
+                  <div style="display:flex;flex-direction:column;align-items:center">
+                    <div class="ifc-yes" style="margin-bottom:0">YES</div>
+                    <div class="fc-arr-v"></div>
+                    <div class="ifc-body-box" id="ifc-b2">Grade C</div>
+                    <div class="fc-arr-v" style="margin-top:6px; margin-bottom:2px"></div>
+                    <div style="font-size:9px;color:var(--text3)">(to End)</div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;margin-left:8px">
+                    <div class="ifc-no" style="margin-bottom:0">NO</div>
+                    <div class="fc-arr-v"></div>
+                    <div class="ifc-body-box" id="ifc-b3">Grade F</div>
+                    <div class="fc-arr-v" style="margin-top:6px; margin-bottom:2px"></div>
+                    <div style="font-size:9px;color:var(--text3)">(to End)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="fc-arr-v" style="margin-top:8px"></div>
+        <div class="ifc-start">End</div>
+      </div>
+      </div><!-- /if-fc-scroll -->
+
+      <!-- Interactive slider side -->
+      <div class="if-slider-side">
+        <div class="if-slider-wrap">
+          <span style="font-family:var(--mono);font-size:13px;color:var(--text2)">score =</span>
+          <input type="range" min="0" max="100" value="72" id="score-sl" oninput="runIf()" style="flex:1">
+          <span class="if-score-num" id="score-disp">72</span>
+        </div>
+        <div class="if-chain" id="if-chain">
+          <div class="if-row" id="if-r0">
+            <div class="if-row-head"><span class="if-kw">if</span><span class="if-cond">&nbsp;(score &gt;= 90)</span><span class="if-arrow" id="if-arr0">—</span></div>
+            <div class="if-row-body"><span style="color:#ce9178">"Excellent\n"</span></div>
+          </div>
+          <div class="if-row" id="if-r1">
+            <div class="if-row-head"><span class="if-kw">else if</span><span class="if-cond">&nbsp;(score &gt;= 75)</span><span class="if-arrow" id="if-arr1">—</span></div>
+            <div class="if-row-body"><span style="color:#ce9178">"Good\n"</span></div>
+          </div>
+          <div class="if-row" id="if-r2">
+            <div class="if-row-head"><span class="if-kw">else if</span><span class="if-cond">&nbsp;(score &gt;= 60)</span><span class="if-arrow" id="if-arr2">—</span></div>
+            <div class="if-row-body"><span style="color:#ce9178">"Pass\n"</span></div>
+          </div>
+          <div class="if-row" id="if-r3">
+            <div class="if-row-head"><span class="if-kw">else</span><span class="if-arrow" id="if-arr3">—</span></div>
+            <div class="if-row-body"><span style="color:#ce9178">"Study harder\n"</span></div>
+          </div>
+        </div>
+        <div class="if-explain" id="if-explain">Drag the slider to see which branch activates</div>
+      </div>
+    </div><!-- /if-demo-wrap -->
+  </div>
+
+  <table class="dtable">
+    <thead><tr><th>Operator</th><th>Meaning</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td>==</td><td>equal to</td><td><code>x == 5</code></td></tr>
+      <tr><td>!=</td><td>not equal</td><td><code>x != 0</code></td></tr>
+      <tr><td>&gt; / &lt;</td><td>greater / less than</td><td><code>x &gt; 10</code></td></tr>
+      <tr><td>&gt;= / &lt;=</td><td>greater/less or equal</td><td><code>x &lt;= 100</code></td></tr>
+      <tr><td>&amp;&amp;</td><td>AND — both must be true</td><td><code>x &gt; 0 &amp;&amp; x &lt; 10</code></td></tr>
+      <tr><td>||</td><td>OR — at least one true</td><td><code>x == 0 || x == 1</code></td></tr>
+      <tr><td>!</td><td>NOT — inverts</td><td><code>!(x == 5)</code></td></tr>
+    </tbody>
+  </table>
+
+  <div class="warn"><span>⚠</span><div><strong>Never write <code>=</code> when you mean <code>==</code>.</strong> <code>if (x = 5)</code> <em>assigns</em> 5 to x (which is always true). <code>if (x == 5)</code> <em>compares</em>. This is one of C's most infamous bugs.</div></div>
+</section>
+
+<!-- ═══ S7: LOOPS ═══ -->
+<section class="section" id="s7">
+  <div class="section-header"><span class="section-num">07</span><h2>Loops</h2></div>
+  <p class="prose">Loops repeat a block of code. C has three kinds — each suited to different situations. The stepper below lets you watch every phase of execution one step at a time.</p>
+
+
+
+  <div class="demo">
+    <div class="demo-label">Interactive Loop Flowchart — watch execution step-by-step</div>
+    <div class="loop-tabs">
+      <div class="loop-tab active" onclick="switchLoop('for',this)">for</div>
+      <div class="loop-tab" onclick="switchLoop('while',this)">while</div>
+      <div class="loop-tab" onclick="switchLoop('dowhile',this)">do…while</div>
+    </div>
+    <div class="params-row" id="loop-params"></div>
+    <div class="phase-note" id="phase-note">Hit Step or Play to watch the loop run phase by phase.</div>
+    <div class="loop-output" id="loop-output">—</div>
+    <div class="loop-ctrls">
+      <button class="btn btn-primary" onclick="loopStep()">Step →</button>
+      <button class="btn" id="btn-play" onclick="loopPlay()">Play ▶</button>
+      <button class="btn" onclick="loopReset()">Reset ↺</button>
+      <div class="loop-spd">
+        <span>Speed</span>
+        <input type="range" min="100" max="900" value="200" id="loop-spd">
+      </div>
+    </div>
+  </div>
+
+  <div class="tip"><span>💡</span><div>The key difference: <code>for</code> and <code>while</code> check the condition <em>before</em> running the body — they may run 0 times. <code>do...while</code> runs the body first, then checks — it always runs at least once.</div></div>
+</section>
+
+<!-- ═══ S8: 1D ARRAYS ═══ -->
+<section class="section" id="s8">
+  <div class="section-header"><span class="section-num">08</span><h2>1D Arrays</h2></div>
+  <p class="prose">An array is a contiguous block of memory holding multiple values of the same type. Elements are accessed by <strong>index starting at 0</strong>. An array of size N has valid indices 0 through N−1. Going outside causes undefined behavior — C will not stop you.</p>
+
+  <div class="demo">
+    <div class="demo-label">Array inspector — click a cell to inspect and edit it</div>
+    <div class="arr-mem" id="arr-mem"></div>
+    <div class="arr-info" id="arr-info">↑ Click any cell to inspect it</div>
+    <div class="arr-edit">
+      <span>Size:</span>
+      <input type="number" id="arr-size" value="8" min="1" max="16" style="width:60px" onchange="arrResize()">
+      <span id="arr-edit-lbl" style="display:none">arr[<span id="arr-edit-idx">0</span>] =</span>
+      <input type="number" id="arr-edit-val" style="width:72px;display:none" oninput="arrEditVal()">
+    </div>
+    <div class="cb" id="arr-code" style="margin-top:14px"></div>
+  </div>
+
+  <div class="tip"><span>💡</span><div>Each <code>int</code> is 4 bytes. So <code>arr[i]</code> lives at memory address <code>base + i * 4</code>. That's why array access is O(1) — the address is computed directly from the index.</div></div>
+
+  <div class="warn"><span>⚠</span><div><strong>Off-by-one errors</strong> are extremely common. A declared array <code>int arr[8]</code> has indices 0–7. Accessing <code>arr[8]</code> is out of bounds — C won't crash immediately, it silently reads or corrupts adjacent memory.</div></div>
+</section>
+
+<!-- ═══ S9: 2D ARRAYS ═══ -->
+<section class="section" id="s9">
+  <div class="section-header"><span class="section-num">09</span><h2>2D Arrays (Matrices)</h2></div>
+  <p class="prose">A 2D array is a grid of values accessed with two indices: <code>mat[row][col]</code>. Internally it's stored as one flat block of memory in <strong>row-major order</strong> — all of row 0, then all of row 1, and so on. Hover rows/columns to see the highlight; click a cell to inspect it.</p>
+
+  <div class="demo">
+    <div class="demo-label">Matrix inspector — hover to highlight rows/cols, click to inspect</div>
+    <div class="params-row">
+      <span style="color:var(--text2)">Rows:</span>
+      <input type="number" id="mat-rows" value="3" min="1" max="6" style="width:50px" onchange="matResize()">
+      <span style="color:var(--text2)">Cols:</span>
+      <input type="number" id="mat-cols" value="4" min="1" max="8" style="width:50px" onchange="matResize()">
+    </div>
+    <div id="mat-container"></div>
+    <div class="mat-info" id="mat-info">↑ Hover to highlight, click to inspect</div>
+    <div class="arr-edit" id="mat-edit" style="display:none">
+      <span>mat[<span id="mat-edit-r">0</span>][<span id="mat-edit-c">0</span>] =</span>
+      <input type="number" id="mat-edit-val" style="width:72px" oninput="matEditVal()">
+    </div>
+    <div class="cb" id="mat-code" style="margin-top:14px"></div>
+  </div>
+
+  <div class="tip"><span>💡</span><div>The flat memory index formula is: <code>row × numCols + col</code>. For a 4-column matrix, <code>mat[1][2]</code> is at flat index <code>1×4 + 2 = 6</code>. This is why traversing a 2D array row-by-row is faster than column-by-column — consecutive rows sit next to each other in memory.</div></div>
+</section>
+
+<!-- ═══ S10: QUICK REFERENCE ═══ -->
+<section class="section" id="s10">
+  <div class="section-header"><span class="section-num">10</span><h2>Quick Reference</h2></div>
+  <p class="prose">Tap a topic for a structured breakdown of syntax, usage, and the most common mistakes students make.</p>
+
+  <div class="concept-tabs">
+    <div class="ctab" onclick="showConcept('datatypes',this)">Data Types</div>
+    <div class="ctab" onclick="showConcept('printf',this)">Printf Specifiers</div>
+    <div class="ctab" onclick="showConcept('scanf',this)">Scanf &amp; &amp;</div>
+    <div class="ctab" onclick="showConcept('scope',this)">Scope Rules</div>
+    <div class="ctab" onclick="showConcept('loops',this)">Loop Patterns</div>
+  </div>
+
+  <div id="concept-area"></div>
+</section>
+
+<div class="footer">Built for Mansoura University · Intro to Programming 2026</div>
+</div><!-- /main -->
+</div><!-- /app -->
+
+<button class="btt" id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script src="js/study.js"></script>
+</body>
+</html>
