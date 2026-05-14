@@ -41,7 +41,7 @@ A self-contained HTML study tool covering 20 practical C programming questions a
 
 ## Usage
 
-1. Download `c_interactive_web.html`
+1. Download `index.html`
 2. Open it in any modern browser (Chrome, Firefox, Safari, Edge)
 3. No server, build step, or internet connection required (fonts may not load offline, but everything else works)
 
@@ -74,7 +74,7 @@ A self-contained HTML study tool covering 20 practical C programming questions a
 Everything lives in a single file:
 
 ```
-c_interactive_web.html
+index.html
 ├── <style>        — all CSS (dark theme, responsive layout, animations)
 ├── <body>         — header, toolbar, progress bar, card grid, modal, toast
 └── <script>
