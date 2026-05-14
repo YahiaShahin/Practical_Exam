@@ -748,7 +748,7 @@ function toggleMode(){ setMode(mode==='detailed'?'brief':'detailed'); }
 /* ═══════════════════════════════════
    PROGRESS / SCROLL SPY / BTT
 ═══════════════════════════════════ */
-const sectionIds=['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10'];
+const sectionIds=['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10','s11'];
 const viewed=new Set();
 sectionIds.forEach(id=>{
   const el=document.getElementById(id);
@@ -767,15 +767,289 @@ sectionIds.forEach(id=>{
   },{rootMargin:'-30% 0px -60% 0px'}).observe(el);
 });
 function updateProg(){
-  const pct=viewed.size/10*100;
+  const pct=viewed.size/11*100;
   const fill=document.getElementById('prog-fill');
   const lbl=document.getElementById('prog-label');
   if(fill) fill.style.width=pct+'%';
-  if(lbl) lbl.textContent=viewed.size+' / 10 viewed';
+  if(lbl) lbl.textContent=viewed.size+' / 11 viewed';
+}
+
+/* ═══════════════════════════════════
+   ORDER OF OPERATIONS (S4)
+═══════════════════════════════════ */
+const PREC_EXAMPLES = [
+  {
+    label: 'Pre-increment has highest priority',
+    expr:  '++x * 2  where x = 3',
+    steps: [
+      { op: '++x',    result: 'x becomes 4',  note: 'Pre-increment fires first — x is now 4' },
+      { op: '4 * 2',  result: '8',             note: 'Then multiplication' },
+    ],
+    final: '8',
+    code:  'int x = 3;\nint r = ++x * 2;  // r = 8  (x is 4 first, then 4*2)'
+  },
+  {
+    label: '* and % before +',
+    expr:  '2 + 3 * 4 % 5',
+    steps: [
+      { op: '3 * 4',  result: '12',  note: '* and % have equal priority — go left to right' },
+      { op: '12 % 5', result: '2',   note: 'Remainder of 12 ÷ 5' },
+      { op: '2 + 2',  result: '4',   note: '+ is last' },
+    ],
+    final: '4',
+    code:  'int r = 2 + 3 * 4 % 5;\n// step 1: 3*4 = 12\n// step 2: 12%5 = 2\n// step 3: 2+2 = 4  →  r = 4'
+  },
+  {
+    label: 'Addition left to right',
+    expr:  '10 - 3 + 2',
+    steps: [
+      { op: '10 - 3', result: '7',  note: 'Same priority — evaluate left to right' },
+      { op: '7 + 2',  result: '9',  note: 'Then add 2' },
+    ],
+    final: '9',
+    code:  'int r = 10 - 3 + 2;\n// step 1: 10-3 = 7\n// step 2: 7+2  = 9  →  r = 9'
+  },
+  {
+    label: 'Arithmetic before comparison',
+    expr:  'x + 1 > 5  where x = 4',
+    steps: [
+      { op: 'x + 1',  result: '5',      note: 'Arithmetic (priority 3) runs first' },
+      { op: '5 > 5',  result: '0 (false)', note: 'Comparison (priority 4) runs after' },
+    ],
+    final: '0 (false)',
+    code:  'int x = 4;\nif (x + 1 > 5)   // 4+1=5, then 5>5 → false (0)\n    printf("yes");\nelse\n    printf("no");  // prints "no"'
+  },
+  {
+    label: 'Comparison before equality',
+    expr:  '3 < 5 == 1',
+    steps: [
+      { op: '3 < 5',  result: '1 (true)', note: '< has higher priority than ==' },
+      { op: '1 == 1', result: '1 (true)', note: 'Then equality check' },
+    ],
+    final: '1 (true)',
+    code:  'int r = 3 < 5 == 1;\n// step 1: 3<5  → 1 (true)\n// step 2: 1==1 → 1 (true)  →  r = 1'
+  },
+  {
+    label: '&& before ||',
+    expr:  '0 || 1 && 1',
+    steps: [
+      { op: '1 && 1', result: '1 (true)',  note: '&& (priority 6) runs before ||' },
+      { op: '0 || 1', result: '1 (true)',  note: 'Then || (priority 7)' },
+    ],
+    final: '1 (true)',
+    code:  'int r = 0 || 1 && 1;\n// step 1: 1&&1 → 1\n// step 2: 0||1 → 1  →  r = 1\n\n// Compare: (0||1) && 1 → 1&&1 → 1  (same here)\n// But:     0 || (0&&1) → 0||0 → 0  (different!)'
+  },
+  {
+    label: '|| is lowest logical operator',
+    expr:  '1 && 0 || 1 && 1',
+    steps: [
+      { op: '1 && 0', result: '0 (false)', note: 'Left && first (left to right)' },
+      { op: '1 && 1', result: '1 (true)',  note: 'Right && next' },
+      { op: '0 || 1', result: '1 (true)',  note: '|| last' },
+    ],
+    final: '1 (true)',
+    code:  'int r = 1&&0 || 1&&1;\n// step 1: 1&&0 → 0\n// step 2: 1&&1 → 1\n// step 3: 0||1 → 1  →  r = 1'
+  },
+  {
+    label: 'Assignment is always last',
+    expr:  'x = 2 + 3 * 4',
+    steps: [
+      { op: '3 * 4',  result: '12', note: 'Multiplication first' },
+      { op: '2 + 12', result: '14', note: 'Then addition' },
+      { op: 'x = 14', result: 'x is 14', note: 'Assignment stores the final result' },
+    ],
+    final: 'x = 14',
+    code:  'int x;\nx = 2 + 3 * 4;\n// step 1: 3*4  = 12\n// step 2: 2+12 = 14\n// step 3: x=14  →  x is now 14'
+  },
+];
+
+function showPrecEx(idx) {
+  const rows = document.querySelectorAll('.prec-row:not(.prec-hdr)');
+  rows.forEach((r, i) => r.classList.toggle('prec-row-active', i === idx));
+
+  const ex = PREC_EXAMPLES[idx];
+  const box = document.getElementById('prec-ex-box');
+  const label = document.getElementById('prec-ex-label');
+  const steps = document.getElementById('prec-steps');
+  const result = document.getElementById('prec-result');
+
+  label.textContent = ex.label + ' — evaluating: ' + ex.expr;
+
+  steps.innerHTML = ex.steps.map((s, i) =>
+    `<div class="prec-step">
+      <span class="prec-step-num">${i + 1}</span>
+      <span class="prec-step-op"><code>${s.op}</code></span>
+      <span class="prec-step-arrow">→</span>
+      <span class="prec-step-res">${s.result}</span>
+      <span class="prec-step-note">${s.note}</span>
+    </div>`
+  ).join('');
+
+  result.innerHTML =
+    `<div class="prec-final-label">Final result</div>` +
+    `<div class="prec-final-val">${ex.final}</div>` +
+    `<div class="cb prec-code-block">${ex.code.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`;
+
+  box.style.display = 'block';
+}
+
+/* ═══════════════════════════════════
+   FUNCTIONS (S8)
+═══════════════════════════════════ */
+const FN_TYPES = [
+  {
+    title: 'Type 1 — void, no parameters',
+    tag: 'void fn(void)',
+    expl: 'This function does a job and exits. It receives nothing from the caller and sends nothing back. The keyword <code>void</code> as the return type means "I return nothing". The keyword <code>void</code> in the parameter list means "I take no input".',
+    anatomy: [
+      { part: 'void',    role: 'Return type — this function returns nothing' },
+      { part: 'greet',   role: 'Function name — describes what it does' },
+      { part: '(void)',  role: 'Parameter list — empty, no input needed' },
+      { part: 'return;', role: 'Optional early exit — no value needed with void' },
+    ],
+    tip: 'Use void functions for side effects: printing output, drawing a line, playing a sound. They change the world but don\'t compute a value.',
+    code:
+`#include <stdio.h>
+
+void greet(void) {
+    printf("Hello, student!\\n");
+    printf("Good luck on your exam.\\n");
+}   /* no return needed */
+
+int main() {
+    greet();   /* call it — no arguments, no result */
+    greet();   /* call it again — reuse for free */
+    return 0;
+}`
+  },
+  {
+    title: 'Type 2 — void, with parameters',
+    tag: 'void fn(int a, int b)',
+    expl: 'This function receives data through its parameters and acts on it, but does not hand anything back. The caller passes values in; the function uses them internally. Parameters are local copies — changing them inside the function does not affect the original variables.',
+    anatomy: [
+      { part: 'void',         role: 'Return type — still returns nothing' },
+      { part: 'printSum',     role: 'Function name' },
+      { part: '(int a, int b)', role: 'Two parameters — the function receives two integers' },
+      { part: 'a + b',        role: 'Uses the parameters internally' },
+    ],
+    tip: 'Parameters are local copies. If you do <code>a = 99</code> inside the function, the original variable in main() is unchanged. This is called pass-by-value.',
+    code:
+`#include <stdio.h>
+
+void printSum(int a, int b) {
+    int sum = a + b;
+    printf("%d + %d = %d\\n", a, b, sum);
+}
+
+int main() {
+    printSum(3, 7);    /* prints: 3 + 7 = 10 */
+    printSum(10, 20);  /* prints: 10 + 20 = 30 */
+    return 0;
+}`
+  },
+  {
+    title: 'Type 3 — has return, no parameters',
+    tag: 'int fn(void)',
+    expl: 'This function computes or reads something and hands the result back to the caller using <code>return</code>. It needs no input — it figures out the value on its own. The return type tells the compiler (and the reader) exactly what type of value comes back.',
+    anatomy: [
+      { part: 'int',       role: 'Return type — this function sends back an int' },
+      { part: 'getScore',  role: 'Function name' },
+      { part: '(void)',    role: 'No parameters — needs no input' },
+      { part: 'return val;', role: 'Sends the value back to whoever called the function' },
+    ],
+    tip: 'The <code>return</code> statement immediately exits the function and sends the value back. Any code after <code>return</code> in the same block is unreachable.',
+    code:
+`#include <stdio.h>
+
+int getScore(void) {
+    int score;
+    printf("Enter your score: ");
+    scanf("%d", &score);
+    return score;   /* send it back */
+}
+
+int main() {
+    int s = getScore();   /* s receives the returned value */
+    printf("You scored: %d\\n", s);
+    return 0;
+}`
+  },
+  {
+    title: 'Type 4 — has return, has parameters',
+    tag: 'int fn(int a, int b)',
+    expl: 'The most common function type. It takes input through parameters, processes it, and returns a result. This is the closest thing to a mathematical function: you give it values, it gives you back an answer. The caller can use the return value directly in expressions.',
+    anatomy: [
+      { part: 'int',          role: 'Return type — sends back an int' },
+      { part: 'add',          role: 'Function name — a verb describing the operation' },
+      { part: '(int a, int b)', role: 'Two inputs — the function works on these' },
+      { part: 'return a + b;', role: 'Computes and returns the result in one line' },
+    ],
+    tip: 'You can use the return value directly: <code>printf("%d", add(3,5));</code> — no need to store it in a variable first.',
+    code:
+`#include <stdio.h>
+
+int add(int a, int b) {
+    return a + b;
+}
+
+float average(int x, int y) {
+    return (x + y) / 2.0f;
+}
+
+int main() {
+    int sum = add(4, 6);          /* sum = 10 */
+    float avg = average(4, 6);    /* avg = 5.0 */
+    printf("Sum: %d\\n", sum);
+    printf("Avg: %.1f\\n", avg);
+    return 0;
+}`
+  },
+];
+
+function showFnType(idx, card) {
+  document.querySelectorAll('.fn-card').forEach((c, i) =>
+    c.classList.toggle('fn-card-active', i === idx)
+  );
+
+  const fn = FN_TYPES[idx];
+  const detail = document.getElementById('fn-detail');
+  document.getElementById('fn-detail-title').textContent = fn.title;
+
+  document.getElementById('fn-detail-expl').innerHTML =
+    `<p class="expl">${fn.expl}</p>`;
+
+  document.getElementById('fn-detail-anatomy').innerHTML =
+    `<div class="fn-anatomy-mini">` +
+    fn.anatomy.map(a =>
+      `<div class="fn-anat-row">
+        <code class="fn-anat-part">${a.part}</code>
+        <span class="fn-anat-role">${a.role}</span>
+      </div>`
+    ).join('') +
+    `</div>`;
+
+  // Syntax-highlight the code block
+  const raw = fn.code
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/\b(int|float|void|return|char|double)\b/g, '<span class="tp">$1</span>')
+    .replace(/\b(if|else|while|for|do)\b/g, '<span class="kw">$1</span>')
+    .replace(/(printf|scanf|greet|printSum|getScore|add|average)/g, '<span class="fn">$1</span>')
+    .replace(/(".*?")/g, '<span class="str">$1</span>')
+    .replace(/(\/\/.*)/g, '<span class="cm">$1</span>')
+    .replace(/(\/\*.*?\*\/)/gs, '<span class="cm">$1</span>')
+    .replace(/\b(\d+(\.\d+)?f?)\b/g, '<span class="num">$1</span>');
+
+  document.getElementById('fn-code-block').innerHTML = raw;
+
+  document.getElementById('fn-detail-tip').innerHTML =
+    `<div class="tip"><span>💡</span><div>${fn.tip}</div></div>`;
+
+  detail.style.display = 'block';
+  detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 const btt=document.getElementById('btt');
-window.addEventListener('scroll',()=>btt.classList.toggle('vis',window.scrollY>380));
+window.addEventListener('scroll',()=>{ if(btt) btt.classList.toggle('vis',window.scrollY>380); });
 
 // auto-show first concept
 window.addEventListener('DOMContentLoaded',()=>{

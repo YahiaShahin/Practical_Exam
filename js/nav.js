@@ -27,22 +27,31 @@
 <nav class="navbar" id="main-nav">
   <div class="nav-inner">
     <a href="index.html" class="nav-brand">IntroToC</a>
-    <ul class="nav-links">
-      ${link('index.html', 'Home')}
-      ${link('study.html', 'Study')}
-      ${link('problems.html', 'Problems')}
-    </ul>
-    <div class="nav-right">
-      <span class="nav-theme-label">THEME:</span>
-      <select class="nav-theme-select" id="theme-select" onchange="changeTheme(this.value)">
-        <option value="paper">Paper (Light)</option>
-        <option value="latte">Latte (Light)</option>
-        <option value="nord">Nord (Icy)</option>
-        <option value="dark-original">Original Dark</option>
-        <option value="midnight-gold">Midnight Gold</option>
-        <option value="neon-synth">Neon Synth</option>
-        <option value="rose-pine">Rosé Pine</option>
-      </select>
+
+    <!-- hamburger button — visible only on small screens -->
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+    <!-- nav links + theme — collapses on mobile -->
+    <div class="nav-collapse" id="nav-collapse">
+      <ul class="nav-links">
+        ${link('index.html', 'Home')}
+        ${link('study.html', 'Study')}
+        ${link('problems.html', 'Problems')}
+      </ul>
+      <div class="nav-right">
+        <span class="nav-theme-label">THEME:</span>
+        <select class="nav-theme-select" id="theme-select" onchange="changeTheme(this.value)">
+          <option value="paper">Paper (Light)</option>
+          <option value="latte">Latte (Light)</option>
+          <option value="nord">Nord (Icy)</option>
+          <option value="dark-original">Original Dark</option>
+          <option value="midnight-gold">Midnight Gold</option>
+          <option value="neon-synth">Neon Synth</option>
+          <option value="rose-pine">Rosé Pine</option>
+        </select>
+      </div>
     </div>
   </div>
 </nav>`;
@@ -57,10 +66,27 @@
     const sel = document.getElementById('theme-select');
     if (sel) sel.value = saved;
 
-    /* study.html uses a sidebar layout — its .main and .sidebar already have
-       margin-top:60px via inline style. For other pages we pad the body. */
-    if (!document.querySelector('.app')) {
-      document.body.style.paddingTop = '52px';
+    /* Hamburger toggle */
+    const hamburger = document.getElementById('nav-hamburger');
+    const collapse  = document.getElementById('nav-collapse');
+    if (hamburger && collapse) {
+      hamburger.addEventListener('click', function () {
+        const open = collapse.classList.toggle('open');
+        hamburger.classList.toggle('open', open);
+        hamburger.setAttribute('aria-expanded', open);
+      });
+      /* Close menu when a nav link is tapped */
+      collapse.querySelectorAll('.nav-link').forEach(function (a) {
+        a.addEventListener('click', function () {
+          collapse.classList.remove('open');
+          hamburger.classList.remove('open');
+          hamburger.setAttribute('aria-expanded', 'false');
+        });
+      });
     }
+
+    /* Navbar is position:sticky — it sits in the document flow naturally.
+       No padding needed on any page. The study page sidebar/main offset
+       is handled via CSS (top: 52px on sticky sidebar). */
   });
 })();

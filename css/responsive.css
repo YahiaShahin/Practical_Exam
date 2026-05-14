@@ -1,0 +1,285 @@
+/* ═══════════════════════════════════════════════
+   RESPONSIVE.CSS — Universal mobile fixes
+   Loaded on every page after style.css.
+   Covers all screen sizes from 320px upward.
+═══════════════════════════════════════════════ */
+
+/* ── 1. HARD OVERFLOW PREVENTION ──────────────
+   Stops any element from ever causing horizontal
+   scroll on the page. Everything scrolls within
+   its own container instead.
+─────────────────────────────────────────────── */
+html {
+  overflow-x: clip; /* clip instead of hidden — doesn't create a stacking context */
+}
+body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* Block-level elements respect the viewport width — not inline elements */
+img, video, iframe, embed, object,
+div, section, article, aside, header, footer, nav, main,
+table, figure, pre, blockquote {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Images and media never overflow */
+img, video, iframe, embed, object {
+  height: auto;
+}
+
+/* ── 2. FLUID TYPOGRAPHY ──────────────────────
+   Replace all fixed px heading sizes with clamp()
+   so they scale smoothly across every screen.
+─────────────────────────────────────────────── */
+
+/* study.html hero h1 (was fixed 42px stepping down) */
+.hero h1 {
+  font-size: clamp(1.4rem, 5vw, 2.6rem) !important;
+}
+
+/* study section headers */
+.section-header h2 {
+  font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+}
+
+/* problems header */
+.prob-header h1 {
+  font-size: clamp(1.1rem, 4vw, 1.6rem) !important;
+}
+   All interactive elements meet the 44×44px
+   minimum recommended touch target size.
+─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .nav-link,
+  .filter-btn,
+  .m-nav,
+  .m-close,
+  .qr-learn,
+  .qr-open,
+  .loop-tab,
+  .ctab,
+  .ob-btn,
+  .ob-skip,
+  .btn,
+  .reset-btn,
+  .clear-btn,
+  .cp-btn,
+  .learn-btn {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* modal nav buttons — bigger on mobile */
+  .m-nav {
+    font-size: 11px;
+    padding: 0 14px;
+  }
+  .m-close {
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
+  }
+}
+
+/* ── 4. PROBLEMS PAGE ─────────────────────────
+   Fix toolbar, modal, and progress bar on small
+   screens. All paddings use clamp() or min().
+─────────────────────────────────────────────── */
+
+/* Uniform padding using clamp — works at any width */
+.prob-header,
+.toolbar,
+.prog-wrap,
+.results-meta,
+.q-list {
+  padding-left: clamp(10px, 4vw, 44px);
+  padding-right: clamp(10px, 4vw, 44px);
+}
+
+/* Toolbar sticky top matches navbar height */
+.toolbar { top: 52px; }
+@media (max-width: 640px) { .toolbar { top: 48px; } }
+
+/* Toolbar top row always wraps cleanly */
+.toolbar-top {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.search-wrap { flex: 1 1 160px; max-width: 100%; }
+.mode-toggle-wrap { flex-shrink: 0; }
+
+/* Filter buttons wrap and shrink */
+.filter-row { flex-wrap: wrap; gap: 6px; }
+.filter-btn { white-space: nowrap; }
+
+/* Progress bar row */
+.prog-inner { flex-wrap: wrap; gap: 8px; }
+.prog-text { min-width: 0; }
+
+/* Question rows */
+.q-row { flex-wrap: wrap; }
+.qr-main { min-width: 0; flex: 1 1 120px; }
+.qr-actions { flex-shrink: 0; }
+
+/* Modal — full screen on mobile, proper sizing on desktop */
+@media (max-width: 640px) {
+  .modal {
+    border-radius: 0;
+    min-height: 100dvh; /* dynamic viewport height — avoids browser chrome overlap */
+  }
+  .m-hdr {
+    padding: 10px 12px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .m-title {
+    width: 100%;
+    order: -1;
+    font-size: .88rem;
+    line-height: 1.4;
+  }
+  .m-body { flex-direction: column; overflow: visible; }
+  .m-left { border-right: none; border-bottom: 1px solid var(--border); overflow: visible; }
+  .m-right { width: 100%; min-height: 0; }
+  .m-foot { padding: 10px 12px; flex-wrap: wrap; }
+  /* hide keyboard hint on small screens */
+  .m-foot > span:last-child { display: none; }
+
+  /* code display — smaller font, still scrollable */
+  .code-display { padding: 10px 12px; }
+  .code-display pre { font-size: 11px; line-height: 1.7; }
+
+  /* breakdown grid stacks */
+  .bk { grid-template-columns: 1fr; }
+  .bk-code { border-right: none; border-bottom: 1px solid var(--border); }
+
+  /* notes textarea */
+  .notes-ta { height: 72px; font-size: 11px; }
+
+  /* tryit */
+  .ti-input, .ti-select { font-size: 12px; }
+  .ti-terminal { font-size: 11px; }
+}
+
+/* ── 5. STUDY PAGE ────────────────────────────
+   Fix hero mode-toggle, section padding, and
+   interactive demos on small screens.
+─────────────────────────────────────────────── */
+
+/* Section padding — fluid */
+.section {
+  padding-left: clamp(12px, 4vw, 48px);
+  padding-right: clamp(12px, 4vw, 48px);
+}
+.hero {
+  padding-left: clamp(12px, 4vw, 48px);
+  padding-right: clamp(12px, 4vw, 48px);
+}
+
+/* Mode toggle: absolute on desktop, inline on mobile */
+@media (max-width: 768px) {
+  .mode-toggle {
+    position: static !important;
+    margin-bottom: 14px;
+    display: inline-flex;
+  }
+  /* remove the padding-right workaround no longer needed */
+  .hero h1, .hero p, .eyebrow { padding-right: 0 !important; }
+}
+
+/* Scope boxes — prevent overflow on tiny screens */
+.scope-box { overflow: hidden; }
+#scope-boxes { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* Calc widget — fluid widths */
+@media (max-width: 480px) {
+  .calc-wrap { max-width: 100%; }
+  .calc-input, .calc-input-b { width: 52px; font-size: 14px; padding: 8px 4px; }
+  .calc-op { padding: 8px 8px; font-size: 14px; }
+  .calc-eq { padding: 8px 6px; }
+  .calc-res { font-size: 16px; }
+}
+
+/* Loop controls — wrap on small screens */
+.loop-ctrls { flex-wrap: wrap; }
+.loop-spd { flex: 1 1 100%; }
+
+/* Array inspector — fluid slot widths */
+@media (max-width: 360px) {
+  .arr-slot { width: 36px; }
+  .arr-box { font-size: 10px; height: 32px; }
+  .mat-cell { width: 30px; height: 28px; font-size: 10px; }
+  .mat-ch { width: 30px; }
+}
+
+/* ── 6. HOME PAGE ─────────────────────────────
+   Fluid padding and grid on index.html.
+─────────────────────────────────────────────── */
+.hero-home {
+  padding-left: clamp(1rem, 5vw, 2rem);
+  padding-right: clamp(1rem, 5vw, 2rem);
+}
+
+/* CTA and info grids — always single column below 480px */
+@media (max-width: 480px) {
+  .cta-grid { grid-template-columns: 1fr !important; gap: 1rem; }
+  .info-grid { grid-template-columns: 1fr 1fr !important; }
+  .hero-meta { flex-direction: column; gap: .5rem; align-items: center; }
+  .cta-card { padding: 1.25rem 1rem; }
+}
+
+/* ── 7. ONBOARDING OVERLAY ────────────────────
+   Ensure the ob-card never overflows on any phone.
+─────────────────────────────────────────────── */
+.ob-overlay { padding: clamp(8px, 3vw, 16px); }
+.ob-card {
+  padding: clamp(1.25rem, 5vw, 2.5rem) clamp(1rem, 4vw, 2.25rem) clamp(1rem, 4vw, 2rem);
+  max-width: min(520px, 100%);
+}
+.ob-slide-title { font-size: clamp(.95rem, 4vw, 1.35rem); }
+.ob-slide-desc { font-size: clamp(.78rem, 2.5vw, .88rem); }
+.ob-pills { gap: 4px; }
+.ob-pill { font-size: clamp(8px, 2vw, 10px); padding: 3px 10px; }
+
+/* ── 8. DEMO BOXES ────────────────────────────
+   Fluid padding on all .demo containers.
+─────────────────────────────────────────────── */
+.demo {
+  padding: clamp(.75rem, 3vw, 1.25rem);
+  overflow-x: auto;
+}
+
+/* ── 9. CODE BLOCKS ───────────────────────────
+   Ensure all code blocks scroll horizontally
+   and never push the page wider.
+─────────────────────────────────────────────── */
+.cb, pre, .code-display pre, .out-txt, .ti-terminal {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  word-break: normal;
+  overflow-wrap: normal;
+  white-space: pre;
+  max-width: 100%;
+}
+
+/* ── 10. TABLES ───────────────────────────────
+   All tables scroll horizontally on mobile.
+─────────────────────────────────────────────── */
+.dtable, .data-table {
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+/* ── 11. FOOTER ───────────────────────────────
+   Fluid footer padding.
+─────────────────────────────────────────────── */
+.footer {
+  padding: clamp(1.5rem, 5vw, 3rem) clamp(1rem, 4vw, 2rem) clamp(1rem, 4vw, 2rem);
+}
