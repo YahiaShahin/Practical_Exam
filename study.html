@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
 <link rel="stylesheet" href="css/study.css">
 <script src="js/nav.js"></script>
 </head>
@@ -15,8 +16,9 @@
 
 <!-- NAVBAR injected by nav.js -->
 
+<div class="app-body">
 <!-- SIDEBAR -->
-<nav class="sidebar" style="margin-top:52px;">
+<nav class="sidebar">
   <div class="sidebar-brand">
     <div class="logo">C Guide</div>
     <div class="sub">Mansoura Uni · 2026</div>
@@ -28,17 +30,18 @@
   <a class="nav-item" href="#s5"><span class="nav-num">05</span> Printf / Scanf</a>
   <a class="nav-item" href="#s6"><span class="nav-num">06</span> Conditions</a>
   <a class="nav-item" href="#s7"><span class="nav-num">07</span> Loops</a>
-  <a class="nav-item" href="#s8"><span class="nav-num">08</span> 1D Arrays</a>
-  <a class="nav-item" href="#s9"><span class="nav-num">09</span> 2D Arrays</a>
-  <a class="nav-item" href="#s10"><span class="nav-num">10</span> Quick Reference</a>
+  <a class="nav-item" href="#s8"><span class="nav-num">08</span> Functions</a>
+  <a class="nav-item" href="#s9"><span class="nav-num">09</span> 1D Arrays</a>
+  <a class="nav-item" href="#s10"><span class="nav-num">10</span> 2D Arrays</a>
+  <a class="nav-item" href="#s11"><span class="nav-num">11</span> Quick Reference</a>
   <div class="sidebar-progress">
     <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
-    <div class="prog-label" id="prog-label">0 / 10 viewed</div>
+    <div class="prog-label" id="prog-label">0 / 11 viewed</div>
   </div>
 </nav>
 
 <!-- MAIN -->
-<div class="main" style="margin-top:52px;">
+<div class="main">
 
 <!-- HERO -->
 <div class="hero" id="top">
@@ -129,7 +132,6 @@
             <div class="sb-label" style="color:#3a8fc7">ScopeB</div>
             <div class="sb-vars">
               <span class="scope-var" data-var="b">int b = 2</span>
-              <span class="scope-var" data-var="e">int e = 5</span>
             </div>
             <div style="display:flex;gap:8px;margin-top:8px">
               <div style="flex:1;padding:8px">
@@ -144,6 +146,9 @@
                   <div class="sb-vars"><span class="scope-var" data-var="d">int d = 4</span></div>
                 </div>
               </div>
+            </div>
+            <div class="sb-vars" style="margin-top:8px">
+              <span class="scope-var" data-var="e">int e = 5</span>
             </div>
           </div>
         </div>
@@ -239,14 +244,74 @@
   <div class="calc-note" id="cnote"></div>
 
   <p class="prose" style="margin-top:1.2rem"><strong>Operator precedence</strong> — higher wins, same level goes left to right:</p>
-  <div class="cb"><span class="cm">// Priority (high → low)</span>
-<span class="cm">// 1.  ++ -- (pre)   e.g. ++x</span>
-<span class="cm">// 2.  * / %         left-to-right</span>
-<span class="cm">// 3.  + -           left-to-right</span>
-<span class="cm">// Use () to override</span>
 
-<span class="tp">int</span> x = <span class="num">5</span> % <span class="num">2</span> * <span class="num">3</span> / <span class="num">2</span>;
-<span class="cm">// 5%2=1 → 1*3=3 → 3/2=1  →  x = 1</span></div>
+  <!-- Interactive Order of Operations -->
+  <div class="demo" id="prec-demo">
+    <div class="demo-label">Interactive — click any row to see a live example evaluated step by step</div>
+    <div class="prec-table">
+      <div class="prec-row prec-hdr">
+        <span class="prec-rank">Priority</span>
+        <span class="prec-ops">Operators</span>
+        <span class="prec-dir">Direction</span>
+        <span class="prec-desc">What it means</span>
+      </div>
+      <div class="prec-row" onclick="showPrecEx(0)">
+        <span class="prec-rank prec-hi">1 — highest</span>
+        <span class="prec-ops"><code>++</code> <code>--</code> (prefix)</span>
+        <span class="prec-dir">Right → Left</span>
+        <span class="prec-desc">Pre-increment / decrement before anything else</span>
+      </div>
+      <div class="prec-row" onclick="showPrecEx(1)">
+        <span class="prec-rank">2</span>
+        <span class="prec-ops"><code>*</code> <code>/</code> <code>%</code></span>
+        <span class="prec-dir">Left → Right</span>
+        <span class="prec-desc">Multiply, divide, remainder — before add/subtract</span>
+      </div>
+      <div class="prec-row" onclick="showPrecEx(2)">
+        <span class="prec-rank">3</span>
+        <span class="prec-ops"><code>+</code> <code>-</code></span>
+        <span class="prec-dir">Left → Right</span>
+        <span class="prec-desc">Addition and subtraction</span>
+      </div>
+      <div class="prec-row" onclick="showPrecEx(3)">
+        <span class="prec-rank">4</span>
+        <span class="prec-ops"><code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code></span>
+        <span class="prec-dir">Left → Right</span>
+        <span class="prec-desc">Comparison — evaluated after arithmetic</span>
+      </div>
+      <div class="prec-row" onclick="showPrecEx(4)">
+        <span class="prec-rank">5</span>
+        <span class="prec-ops"><code>==</code> <code>!=</code></span>
+        <span class="prec-dir">Left → Right</span>
+        <span class="prec-desc">Equality check — lower than comparisons</span>
+      </div>
+      <div class="prec-row" onclick="showPrecEx(5)">
+        <span class="prec-rank">6</span>
+        <span class="prec-ops"><code>&amp;&amp;</code></span>
+        <span class="prec-dir">Left → Right</span>
+        <span class="prec-desc">Logical AND — both sides must be true</span>
+      </div>
+      <div class="prec-row" onclick="showPrecEx(6)">
+        <span class="prec-rank">7</span>
+        <span class="prec-ops"><code>||</code></span>
+        <span class="prec-dir">Left → Right</span>
+        <span class="prec-desc">Logical OR — at least one side true</span>
+      </div>
+      <div class="prec-row" onclick="showPrecEx(7)">
+        <span class="prec-rank prec-lo">8 — lowest</span>
+        <span class="prec-ops"><code>=</code> <code>+=</code> <code>-=</code> …</span>
+        <span class="prec-dir">Right → Left</span>
+        <span class="prec-desc">Assignment — always last, right side evaluated first</span>
+      </div>
+    </div>
+    <div class="prec-ex-box" id="prec-ex-box" style="display:none">
+      <div class="prec-ex-label" id="prec-ex-label"></div>
+      <div class="prec-steps" id="prec-steps"></div>
+      <div class="prec-result" id="prec-result"></div>
+    </div>
+  </div>
+
+  <div class="tip"><span>💡</span><div>When in doubt, use <strong>parentheses</strong>. <code>(a + b) * c</code> is always clearer than relying on precedence rules — and it can never be wrong.</div></div>
 </section>
 
 <!-- ═══ S5: PRINTF / SCANF ═══ -->
@@ -297,7 +362,8 @@
     <div class="demo-label">How if/else chains work — control flow diagram</div>
     <div class="if-demo-wrap">
       <div class="if-fc-scroll">
-        <div class="if-flowchart-wrap" style="min-width:160px">
+        <div class="if-fc-scale-wrap">
+        <div class="if-flowchart-wrap">
         <div class="ifc-start">Start</div>
         <div class="fc-arr-v"></div>
         <div class="ifc-diamond" id="ifc-d0">
@@ -357,6 +423,7 @@
         <div class="fc-arr-v" style="margin-top:8px"></div>
         <div class="ifc-start">End</div>
       </div>
+        </div><!-- /if-fc-scale-wrap -->
       </div><!-- /if-fc-scroll -->
 
       <!-- Interactive slider side -->
@@ -436,9 +503,99 @@
   <div class="tip"><span>💡</span><div>The key difference: <code>for</code> and <code>while</code> check the condition <em>before</em> running the body — they may run 0 times. <code>do...while</code> runs the body first, then checks — it always runs at least once.</div></div>
 </section>
 
-<!-- ═══ S8: 1D ARRAYS ═══ -->
+<!-- ═══ S8: FUNCTIONS ═══ -->
 <section class="section" id="s8">
-  <div class="section-header"><span class="section-num">08</span><h2>1D Arrays</h2></div>
+  <div class="section-header"><span class="section-num">08</span><h2>Functions</h2></div>
+  <p class="prose">A function is a named, reusable block of code. You define it once and call it as many times as you need. Functions take the repetition out of your code and make it easier to read, test, and fix. Every C program already uses one: <code>main()</code>.</p>
+  <p class="prose">There are four combinations based on two questions: does the function <strong>receive data</strong> (parameters)? Does it <strong>send data back</strong> (return value)?</p>
+
+  <!-- Function type cards -->
+  <div class="fn-type-grid">
+
+    <!-- Type 1: void, no params -->
+    <div class="fn-card" onclick="showFnType(0, this)">
+      <div class="fn-card-tag">Type 1</div>
+      <div class="fn-card-title">No return &nbsp;·&nbsp; No parameters</div>
+      <div class="fn-card-sig"><code>void greet(void)</code></div>
+      <div class="fn-card-desc">Does a job and finishes. Nothing goes in, nothing comes out. Good for printing menus, drawing separators, or any self-contained action.</div>
+    </div>
+
+    <!-- Type 2: void, with params -->
+    <div class="fn-card" onclick="showFnType(1, this)">
+      <div class="fn-card-tag">Type 2</div>
+      <div class="fn-card-title">No return &nbsp;·&nbsp; Has parameters</div>
+      <div class="fn-card-sig"><code>void printSum(int a, int b)</code></div>
+      <div class="fn-card-desc">Receives data and acts on it, but doesn't hand anything back. Good for printing results, modifying output based on input.</div>
+    </div>
+
+    <!-- Type 3: return, no params -->
+    <div class="fn-card" onclick="showFnType(2, this)">
+      <div class="fn-card-tag">Type 3</div>
+      <div class="fn-card-title">Has return &nbsp;·&nbsp; No parameters</div>
+      <div class="fn-card-sig"><code>int getYear(void)</code></div>
+      <div class="fn-card-desc">Computes or reads something and hands the result back. No input needed — it figures it out internally. Good for reading sensors, getting constants.</div>
+    </div>
+
+    <!-- Type 4: return, with params -->
+    <div class="fn-card" onclick="showFnType(3, this)">
+      <div class="fn-card-tag fn-card-tag-hi">Type 4</div>
+      <div class="fn-card-title">Has return &nbsp;·&nbsp; Has parameters</div>
+      <div class="fn-card-sig"><code>int add(int a, int b)</code></div>
+      <div class="fn-card-desc">The most common type. Takes input, processes it, returns a result. Think of it like a math function: <em>f(x) = x + 1</em>.</div>
+    </div>
+
+  </div>
+
+  <!-- Detail panel — shown when a card is clicked -->
+  <div class="fn-detail" id="fn-detail" style="display:none">
+    <div class="fn-detail-inner">
+      <div class="fn-detail-left">
+        <div class="fn-detail-title" id="fn-detail-title"></div>
+        <div class="fn-detail-expl" id="fn-detail-expl"></div>
+        <div class="fn-detail-anatomy" id="fn-detail-anatomy"></div>
+      </div>
+      <div class="fn-detail-right">
+        <div class="fn-code-hdr">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:6px">main.c</span>
+        </div>
+        <div class="cb fn-code-block" id="fn-code-block" style="margin:0;border-radius:0 0 var(--r) var(--r);border-top:none"></div>
+      </div>
+    </div>
+    <div class="fn-detail-tip" id="fn-detail-tip"></div>
+  </div>
+
+  <!-- Anatomy diagram — always visible -->
+  <div class="demo" style="margin-top:1rem">
+    <div class="demo-label">Anatomy of a function definition</div>
+    <div class="fn-anatomy-wrap">
+      <div class="fn-anatomy-code">
+<span class="tp">int</span> <span class="fn">add</span>(<span class="tp">int</span> a, <span class="tp">int</span> b) {   <span class="cm">← ① ② ③</span>
+    <span class="kw">return</span> a + b;              <span class="cm">← ④</span>
+}
+
+<span class="tp">int</span> main() {
+    <span class="tp">int</span> result = <span class="fn">add</span>(<span class="num">3</span>, <span class="num">5</span>);  <span class="cm">← ⑤</span>
+    <span class="fn">printf</span>(<span class="str">"%d\n"</span>, result);   <span class="cm">// prints 8</span>
+    <span class="kw">return</span> <span class="num">0</span>;
+}</div>
+      <div class="fn-anatomy-notes">
+        <div class="fn-anatomy-title">What each part does</div>
+        <div class="fn-anatomy-item"><span class="fn-anatomy-num">①</span> <strong>Return type</strong> — what type of value the function sends back (<code>int</code>, <code>float</code>, <code>void</code>…)</div>
+        <div class="fn-anatomy-item"><span class="fn-anatomy-num">②</span> <strong>Name</strong> — what you call it. Use a verb: <code>add</code>, <code>print</code>, <code>calculate</code></div>
+        <div class="fn-anatomy-item"><span class="fn-anatomy-num">③</span> <strong>Parameters</strong> — the inputs, each with a type and name. Empty = <code>void</code></div>
+        <div class="fn-anatomy-item"><span class="fn-anatomy-num">④</span> <strong>return</strong> — sends a value back to the caller and exits the function immediately</div>
+        <div class="fn-anatomy-item"><span class="fn-anatomy-num">⑤</span> <strong>Call</strong> — use the function name with arguments in parentheses</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn"><span>⚠</span><div>A function must be <strong>declared before it is called</strong>. Either define it above <code>main()</code>, or write a <em>prototype</em> at the top: <code>int add(int a, int b);</code> — this tells the compiler the function exists before it sees the full definition.</div></div>
+</section>
+
+<!-- ═══ S9: 1D ARRAYS ═══ -->
+<section class="section" id="s9">
+  <div class="section-header"><span class="section-num">09</span><h2>1D Arrays</h2></div>
   <p class="prose">An array is a contiguous block of memory holding multiple values of the same type. Elements are accessed by <strong>index starting at 0</strong>. An array of size N has valid indices 0 through N−1. Going outside causes undefined behavior — C will not stop you.</p>
 
   <div class="demo">
@@ -459,9 +616,9 @@
   <div class="warn"><span>⚠</span><div><strong>Off-by-one errors</strong> are extremely common. A declared array <code>int arr[8]</code> has indices 0–7. Accessing <code>arr[8]</code> is out of bounds — C won't crash immediately, it silently reads or corrupts adjacent memory.</div></div>
 </section>
 
-<!-- ═══ S9: 2D ARRAYS ═══ -->
-<section class="section" id="s9">
-  <div class="section-header"><span class="section-num">09</span><h2>2D Arrays (Matrices)</h2></div>
+<!-- ═══ S10: 2D ARRAYS ═══ -->
+<section class="section" id="s10">
+  <div class="section-header"><span class="section-num">10</span><h2>2D Arrays (Matrices)</h2></div>
   <p class="prose">A 2D array is a grid of values accessed with two indices: <code>mat[row][col]</code>. Internally it's stored as one flat block of memory in <strong>row-major order</strong> — all of row 0, then all of row 1, and so on. Hover rows/columns to see the highlight; click a cell to inspect it.</p>
 
   <div class="demo">
@@ -484,9 +641,9 @@
   <div class="tip"><span>💡</span><div>The flat memory index formula is: <code>row × numCols + col</code>. For a 4-column matrix, <code>mat[1][2]</code> is at flat index <code>1×4 + 2 = 6</code>. This is why traversing a 2D array row-by-row is faster than column-by-column — consecutive rows sit next to each other in memory.</div></div>
 </section>
 
-<!-- ═══ S10: QUICK REFERENCE ═══ -->
-<section class="section" id="s10">
-  <div class="section-header"><span class="section-num">10</span><h2>Quick Reference</h2></div>
+<!-- ═══ S11: QUICK REFERENCE ═══ -->
+<section class="section" id="s11">
+  <div class="section-header"><span class="section-num">11</span><h2>Quick Reference</h2></div>
   <p class="prose">Tap a topic for a structured breakdown of syntax, usage, and the most common mistakes students make.</p>
 
   <div class="concept-tabs">
@@ -502,6 +659,7 @@
 
 <div class="footer">Built for Mansoura University · Intro to Programming 2026</div>
 </div><!-- /main -->
+</div><!-- /app-body -->
 </div><!-- /app -->
 
 <button class="btt" id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>

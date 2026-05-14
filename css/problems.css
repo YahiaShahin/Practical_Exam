@@ -295,18 +295,54 @@
   .m-right{min-height:400px}
   .bk{grid-template-columns:1fr}
   .bk-code{border-right:none;border-bottom:1px solid var(--border)}
+  /* toolbar: stack search and mode toggle */
+  .toolbar-top{flex-wrap:wrap;gap:6px}
+  .search-wrap{max-width:100%;flex:1 1 200px}
+  .mode-toggle-wrap{margin-left:0}
+  /* stats row */
+  .stats-row{gap:12px}
 }
 
-@media(max-width:480px){
+@media(max-width:600px){
   .prob-header,.toolbar,.prog-wrap,.results-meta{padding-left:12px;padding-right:12px}
   .q-list{padding-left:12px;padding-right:12px;padding-bottom:60px}
-  .toolbar{padding-top:8px;padding-bottom:8px}
+  .toolbar{padding-top:8px;padding-bottom:8px;top:48px}
   .search-input{font-size:12px}
   .filter-row{gap:4px}
   .filter-btn{font-size:10px;padding:4px 10px}
   .q-row{padding:8px 8px;gap:6px}
   .qr-title{font-size:.8rem}
   .qr-num{min-width:26px;font-size:9px}
-  .stats-row{gap:12px}
+  .stats-row{gap:10px}
   .stat-num{font-size:.95rem}
+  /* modal full-screen on small phones */
+  .m-body{flex-direction:column;overflow:visible}
+  .m-left{border-right:none;border-bottom:1px solid var(--border);overflow:visible}
+  .m-right{width:100%;min-height:360px}
+  /* code display smaller font */
+  .code-display pre{font-size:11px}
+  .bk-code{font-size:10px}
+  .bk-text{font-size:.75rem}
+  /* notes textarea */
+  .notes-ta{height:70px;font-size:11px}
+  /* tryit */
+  .ti-input,.ti-select{font-size:12px}
+}
+
+@media(max-width:480px){
+  .prob-header,.toolbar,.prog-wrap,.results-meta{padding-left:10px;padding-right:10px}
+  .q-list{padding-left:10px;padding-right:10px}
+  .prob-header h1{font-size:1.15rem}
+  .filter-btn{font-size:9px;padding:3px 8px}
+  .q-row{padding:7px 6px;gap:5px}
+  .qr-title{font-size:.78rem}
+  .qr-actions{display:none}
+  /* show actions only on expanded row */
+  .q-row.expanded .qr-actions{display:flex;flex-direction:row;gap:6px;width:100%;order:12;margin-top:4px}
+  .m-hdr{padding:10px 10px}
+  .m-title{font-size:.85rem}
+  .m-foot{padding:10px 12px;flex-wrap:wrap;gap:8px}
+  .m-foot span:last-child{display:none}
+  .expl{font-size:.82rem}
+  .out-txt{font-size:10px}
 }
