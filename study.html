@@ -205,7 +205,7 @@
 
 <span class="cm">// declare multiple of same type at once</span>
 <span class="tp">int</span> x = <span class="num">1</span>, y = <span class="num">2</span>, z = <span class="num">3</span>;</div>
-  <div class="tip"><span>💡</span><div>Assigning <code>float gpa = 3.7;</code> without the <code>f</code> suffix gives a warning — the literal <code>3.7</code> is a <code>double</code> being narrowed to <code>float</code>. Write <code>3.7f</code> to be explicit.</div></div>
+  <div class="tip"><span>💡</span><div>Writing <code>float gpa = 3.7;</code> works fine — the compiler silently converts the <code>double</code> literal to <code>float</code>. The <code>f</code> suffix (<code>3.7f</code>) is optional: it just tells the compiler the literal is already a <code>float</code>, which avoids the implicit conversion and can suppress strict-mode warnings.</div></div>
 </section>
 
 <!-- ═══ S4: OPERATORS ═══ -->
