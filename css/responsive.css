@@ -49,7 +49,7 @@ img, video, iframe, embed, object {
 .prob-header h1 {
   font-size: clamp(1.1rem, 4vw, 1.6rem) !important;
 }
-   All interactive elements meet the 44×44px
+/* All interactive elements meet the 44×44px
    minimum recommended touch target size.
 ─────────────────────────────────────────────── */
 @media (max-width: 768px) {
@@ -143,8 +143,8 @@ img, video, iframe, embed, object {
     font-size: .88rem;
     line-height: 1.4;
   }
-  .m-body { flex-direction: column; overflow: visible; }
-  .m-left { border-right: none; border-bottom: 1px solid var(--border); overflow: visible; }
+  .m-body { flex-direction: column; overflow: auto; flex: none; }
+  .m-left { border-right: none; border-bottom: 1px solid var(--border); overflow: hidden; flex: none; }
   .m-right { width: 100%; min-height: 0; }
   .m-foot { padding: 10px 12px; flex-wrap: wrap; }
   /* hide keyboard hint on small screens */

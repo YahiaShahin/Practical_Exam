@@ -132,11 +132,12 @@
 ═══════════════════════════════════════ */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);z-index:200;overflow:hidden}
 .modal-overlay.active{display:block}
-.modal-wrap{height:100%;display:flex;align-items:flex-start;justify-content:center;padding:0;overflow:hidden}
+/* Mobile: wrap fills overlay and lets .modal scroll */
+.modal-wrap{height:100%;display:flex;align-items:flex-start;justify-content:center;padding:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
 @media(min-width:860px){.modal-wrap{align-items:center;padding:20px;overflow:hidden}}
-/* Mobile: full screen */
-.modal{background:var(--card);border:1px solid var(--border-hi);width:100%;min-height:100vh;animation:modalIn .25s cubic-bezier(.22,.61,.36,1);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden}
-/* Desktop: fixed max size, never full screen */
+/* Mobile: full screen — content grows naturally, .modal-wrap is the scroller */
+.modal{background:var(--card);border:1px solid var(--border-hi);width:100%;min-height:100vh;animation:modalIn .25s cubic-bezier(.22,.61,.36,1);display:flex;flex-direction:column;overflow:visible}
+/* Desktop: fixed max size, internal panels scroll */
 @media(min-width:860px){.modal{border-radius:18px;width:min(960px,92vw);min-width:600px;max-width:960px;min-height:auto;height:min(700px,88vh);max-height:88vh;overflow:hidden}}
 @keyframes modalIn{from{opacity:0;transform:scale(.97) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
 .m-hdr{padding:16px 22px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;background:var(--card);position:sticky;top:0;z-index:5}
@@ -148,9 +149,11 @@
 .m-close{background:transparent;border:1px solid var(--border);color:var(--muted);width:30px;height:30px;border-radius:var(--rs);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
 .m-close:hover{color:var(--text);border-color:var(--text)}
 .m-body{display:flex;flex:1;overflow:hidden;min-height:0}
-@media(max-width:859px){.m-body{flex-direction:column;overflow:visible}}
+/* Mobile: column layout, overflow auto so content expands and .modal-wrap scrolls it */
+@media(max-width:859px){.m-body{flex-direction:column;overflow:auto;flex:none}}
 .m-left{flex:1;min-width:280px;padding:20px 22px;border-right:1px solid var(--border);overflow-y:auto;overflow-x:hidden}
-@media(max-width:859px){.m-left{border-right:none;border-bottom:1px solid var(--border);overflow:visible}}
+/* Mobile: expand naturally, no independent scroll — parent .modal-wrap handles it */
+@media(max-width:859px){.m-left{border-right:none;border-bottom:1px solid var(--border);overflow:hidden;flex:none}}
 .sec{font-family:var(--font-mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:10px;margin-top:24px;display:flex;align-items:center;gap:10px}
 .sec:first-child{margin-top:0}
 .sec::after{content:'';flex:1;height:1px;background:var(--border)}
