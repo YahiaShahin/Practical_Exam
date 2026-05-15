@@ -34,6 +34,7 @@
   height: 500px;
   background: radial-gradient(ellipse, rgba(136,192,208,.08) 0%, transparent 65%);
   pointer-events: none;
+  z-index: 0;
 }
 .hero-badge {
   display: inline-block;
@@ -80,17 +81,46 @@
   border-radius: var(--r);
   padding: 2rem 1.75rem;
   text-decoration: none;
+  color: var(--text);
   transition: transform .28s cubic-bezier(.22,.61,.36,1), border-color .28s, box-shadow .28s;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  cursor: pointer;
+  /* always fill its grid cell — no shrinking */
+  width: 100%;
+  box-sizing: border-box;
+  /* instant tap response on mobile — no 300ms delay */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  /* keep in normal flow — no compositing tricks that break hit-testing */
+  position: relative;
+  z-index: 1;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.cta-card:hover,
+.cta-card:focus,
+.cta-card:active {
+  text-decoration: none;
+  color: var(--text);
+  outline: none;
 }
 .cta-card:hover {
   transform: translateY(-4px);
-  text-decoration: none;
   box-shadow: 0 0 50px var(--bg-ac);
 }
-.cta-card.study-card:hover { border-color: var(--bd-ac); }
+/* on touch devices skip the lift — just show border glow */
+@media (hover: none) {
+  .cta-card:hover { transform: none; }
+  .cta-card:active {
+    transform: scale(.98);
+    border-color: var(--bd-ac);
+    box-shadow: 0 0 20px var(--bg-ac);
+  }
+  .cta-card.problems-card:active { border-color: var(--bd-a2); }
+}
+.cta-card.study-card:hover   { border-color: var(--bd-ac); }
 .cta-card.problems-card:hover { border-color: var(--bd-a2); }
 
 .cta-icon {
@@ -98,13 +128,15 @@
   line-height: 1;
 }
 .cta-card h2 {
-  font-size: 1.15rem;
+  font-size: 1.15rem !important; /* override global h2 clamp */
   font-weight: 700;
-  color: var(--text);
+  color: var(--text) !important;
+  margin: 0;
+  letter-spacing: -.3px;
 }
 .cta-card p {
-  font-size: .85rem;
-  color: var(--muted);
+  font-size: .88rem;
+  color: var(--text2) !important;
   line-height: 1.7;
   margin: 0;
 }
@@ -113,10 +145,11 @@
   font-size: 11px;
   color: var(--accent);
   margin-top: auto;
-  padding-top: 8px;
+  padding-top: 10px;
   transition: transform .2s;
+  display: inline-block;
 }
-.cta-card:hover .cta-arrow { transform: translateX(4px); }
+.cta-card:hover .cta-arrow { transform: translateX(5px); }
 .cta-card.problems-card .cta-arrow { color: var(--accent2); }
 
 /* Topics preview */
@@ -367,12 +400,17 @@
   background: rgba(0,0,0,.72);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  display: flex; align-items: center; justify-content: center;
+  display: none; /* completely remove from render tree when inactive */
+  align-items: center; justify-content: center;
   padding: 16px;
   opacity: 0; pointer-events: none;
   transition: opacity .35s ease;
 }
-.ob-overlay.active { opacity: 1; pointer-events: all; }
+.ob-overlay.active { 
+  display: flex; /* show in layout when active */
+  opacity: 1; 
+  pointer-events: all; 
+}
 
 .ob-card {
   background: var(--card);
@@ -593,24 +631,22 @@
 <!-- CTA CARDS -->
 <div class="page">
   <div class="cta-grid">
-    <a href="study.html" class="cta-card study-card">
+    <div class="cta-card study-card" role="link" tabindex="0" aria-label="Go to Study Guide" data-href="study.html">
       <span class="cta-icon">📖</span>
       <h2>Study Guide</h2>
       <p>
-        Learn C programming step by step - from basic syntax and variables to loops, functions, and arrays.
-        Detailed explanations with interactive examples.
+        11 topics from syntax to arrays — each with interactive demos, flowcharts, and mentor-style explanations. Click anything, drag sliders, step through loops.
       </p>
-      <span class="cta-arrow">Start learning --></span>
-    </a>
-    <a href="problems.html" class="cta-card problems-card">
+      <span class="cta-arrow">Start learning &nbsp;→</span>
+    </div>
+    <div class="cta-card problems-card" role="link" tabindex="0" aria-label="Go to Practice Problems" data-href="problems.html">
       <span class="cta-icon">🧪</span>
       <h2>Practice Problems</h2>
       <p>
-        20 exam-style C problems with deep explanations, line-by-line code breakdowns,
-        interactive "Try It" panels, and progress tracking.
+        46 exam-style C problems with full explanations, line-by-line code breakdowns, interactive Try It panels, and progress tracking.
       </p>
-      <span class="cta-arrow">Start practicing --></span>
-    </a>
+      <span class="cta-arrow">Start practicing &nbsp;→</span>
+    </div>
   </div>
 
   <!-- TOPICS PREVIEW -->
@@ -797,6 +833,39 @@
 
 <script src="js/problems-data.js"></script>
 <script>
+/* ── CTA Card navigation — whole card is always tappable ── */
+(function () {
+  function navigate(href) { window.location.href = href; }
+
+  document.querySelectorAll('.cta-card[data-href]').forEach(function (card) {
+    var href = card.getAttribute('data-href');
+
+    // Mouse click
+    card.addEventListener('click', function () { navigate(href); });
+
+    // Keyboard: Enter or Space
+    card.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        navigate(href);
+      }
+    });
+
+    // Touch: use touchend so it fires even if the browser skips click
+    var touchMoved = false;
+    card.addEventListener('touchstart', function () { touchMoved = false; }, { passive: true });
+    card.addEventListener('touchmove',  function () { touchMoved = true;  }, { passive: true });
+    card.addEventListener('touchend',   function (e) {
+      if (!touchMoved) {
+        e.preventDefault(); // prevent ghost click
+        navigate(href);
+      }
+    });
+  });
+})();
+</script>
+
+<script>
 /* Dynamic Stats */
 (function(){
   if (typeof Q !== 'undefined') {
@@ -901,7 +970,10 @@ function obNext() {
 function obEnd() {
   const ov = document.getElementById('ob-overlay');
   ov.style.opacity = '0';
-  setTimeout(() => { ov.classList.remove('active'); ov.style.opacity = ''; }, 350);
+  setTimeout(() => { 
+    ov.classList.remove('active'); 
+    ov.style.opacity = ''; 
+  }, 350);
   localStorage.setItem('c_tour_seen', 'true');
   document.body.style.overflow = '';
 }
@@ -922,7 +994,10 @@ document.addEventListener('keydown', e => {
   if (forceTour || !localStorage.getItem('c_tour_seen')) {
     const ov = document.getElementById('ob-overlay');
     document.body.style.overflow = 'hidden';
-    setTimeout(() => ov.classList.add('active'), 300);
+    // Two-step: first add .active (display:flex), then trigger opacity transition
+    ov.classList.add('active');
+    ov.style.opacity = '0';
+    setTimeout(() => { ov.style.opacity = ''; }, 50);
     /* clean the URL without reloading */
     if (forceTour) history.replaceState(null, '', window.location.pathname);
   }

@@ -321,7 +321,10 @@ body::before {
 }
 
 a { color: var(--accent); text-decoration: none; }
-a:hover { text-decoration: underline; }
+/* Only underline plain inline links — not cards, nav items, or buttons styled as links */
+a:hover:not(.cta-card):not(.nav-link):not(.nav-brand):not(.nav-item):not(.celebrate-btn-sec):not(.sidebar-link):not([class]) {
+  text-decoration: underline;
+}
 
 /* ── DISABLE LIGATURES EVERYWHERE ── */
 code, pre, .mono,
