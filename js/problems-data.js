@@ -1,4 +1,3 @@
-
 const Q = [
   {
   num: 1, title: "Basic Calculator (all operations)", tag: "basics", tagLabel: "Basics", group: "practical",
@@ -40,7 +39,7 @@ const Q = [
     ],
     run(vals){
       const a = parseFloat(vals.ti_a)||0, b = parseFloat(vals.ti_b)||0;
-      if(b===0) return `sum      = ${(a+0).toFixed(6)}\nsubtract = ${(a-0).toFixed(6)}\nmultiply = ${(a*0).toFixed(6)}\ndivide   = [ERROR: can't divide by zero]`;
+      if(b===0) return `sum      = ${(a+b).toFixed(6)}\nsubtract = ${(a-b).toFixed(6)}\nmultiply = ${(a*b).toFixed(6)}\ndivide   = [ERROR: can't divide by zero]`;
       return `sum      = ${(a+b).toFixed(6)}\nsubtract = ${(a-b).toFixed(6)}\nmultiply = ${(a*b).toFixed(6)}\ndivide   = ${(a/b).toFixed(6)}`;
     }
   }
@@ -430,7 +429,7 @@ int main() {
 int main() {
   int day;
   printf("Enter day number: ");
-  scanf(" %i", &day);
+  scanf("%d", &day);
 
   switch (day) {
       case 1: printf("Today is Saturday");  break;
@@ -526,7 +525,7 @@ int main() {
   },
   {
 
-  num: 11, title: "Sum of Even Numbers (0–100)", tag: "loops", tagLabel: "Loops",
+  num: 11, title: "Sum of Even Numbers (0–100)", tag: "loops", tagLabel: "Loops", group: "practical",
   brief: "Use a for loop to sum all even numbers from 0 to 100. Answer: 2550.",
   concepts: ["for loop","loop anatomy","accumulator pattern","i+=2 step","sum calculation"],
 
@@ -872,7 +871,7 @@ int main() {
     ],
     run(v){
       let a=parseInt(v.ti_start)||10, end=parseInt(v.ti_end)||20;
-      if(end<=a+1) return `Start must be less than end!`;
+      if(end<=a) return `Start must be less than end!`;
       let lines=[],count=0;
       do{
         if(count<10) lines.push(`value of a: ${a}`);
@@ -916,7 +915,7 @@ int main() {
   ],
 
   mistakes: [
-    { text: "Using <code>grade != \"X\"</code> (with double quotes) — double quotes make a string, single quotes make a char. <code>\"X\"</code> is a string; <code>'X'</code> is a character. Switch only works with chars/ints, not strings." },
+    { text: "Using <code>grade != \"X\"</code> (with double quotes) — double quotes make a string, single quotes make a char. In C, you cannot compare a <code>char</code> variable to a string using <code>!=</code>; always use single quotes for character comparisons: <code>'X'</code>." },
   ],
 
   syntaxTip: "<code>!=</code> means 'not equal'. Opposite of <code>==</code>. Similarly: <code>>=</code> is 'greater than or equal', <code><=</code> is 'less than or equal', <code>></code> and <code><</code> are strict comparisons.",
@@ -1097,9 +1096,9 @@ int main() {
       const parts=(v.ti_salaries||'').split(',').map(s=>parseInt(s.trim())).filter(n=>!isNaN(n));
       let sum=0,lines=[];
       for(const s of parts){
-        if(sum>thresh) break;
         sum+=s;
         lines.push(`Enter salary: ${s}  →  running total: ${sum}`);
+        if(sum>thresh) break;
       }
       lines.push(`\nThe sum of salaries will be: ${sum}`);
       if(sum<=thresh) lines.push(`(total didn't reach ${thresh} — add more salaries)`);
@@ -1267,11 +1266,11 @@ int main() {
     "If the condition is true, the current value of <code>i</code> is printed.",
     "After printing, <code>i++</code> increases <code>i</code> by 1.",
     "The process repeats until <code>i</code> becomes greater than <code>num</code>.",
-    "Finally, <code>printf(\"\\\\n\")</code> moves the cursor to the next line."
+    "Finally, <code>printf(\"\\n\")</code> moves the cursor to the next line."
   ],
   breakdown: [{code: "for(int i = 1; i <= num; i++)",text: "This is the full loop header. <code>int i = 1</code> creates the loop counter and starts it at 1. <code>i <= num</code> is the stopping condition. <code>i++</code> increases i after every iteration."},
     {code: 'printf("%d ", i);', text: "Prints the current value of <code>i</code>. The space after <code>%d</code> keeps the numbers separated nicely on the screen."},
-    {code: 'printf("\\\\n");',text: "Prints a newline character so the terminal cursor moves to the next line after the loop finishes."}
+    {code: 'printf("\\n");',text: "Prints a newline character so the terminal cursor moves to the next line after the loop finishes."}
   ],
   mistakes: [
     {text: "Using <code>i < num</code> instead of <code>i <= num</code> — this skips printing the final number." },
@@ -1337,7 +1336,7 @@ int main() {
   "If true, the current value of <code>i</code> is printed.",
   "After printing, <code>i--</code> decreases <code>i</code> by 1.",
   "The loop continues until <code>i</code> becomes 0.",
-  "Finally, <code>printf(\"\\\\n\")</code> moves the cursor to the next line."
+  "Finally, <code>printf(\"\\n\")</code> moves the cursor to the next line."
   ],
   breakdown: [
   {
@@ -1349,7 +1348,7 @@ int main() {
     text: "Prints the current value of i followed by a space for readability."
   },
   {
-    code: 'printf("\\\\n");',
+    code: 'printf("\\n");',
     text: "Prints a newline after the loop finishes."
   }
   ],
@@ -1743,93 +1742,6 @@ int main() {
   }
   },
   {
-  num: 28, title: "Product of Digits in a Number", tag: "task1", tagLabel: "Task 1", group: "task1",
-
-  brief: "Take an integer and compute the product of all its digits using a while loop.",
-
-  concepts: ["while loop", "modulo %", "integer division", "variables", "printf / scanf"],
-
-  explanationDetailed: `
-<p>The goal here is simple: break a number into digits and multiply them together.</p>
-
-<p><strong>Key idea: </strong> Every digit of a number can be extracted using <code>% 10</code>. This gives the last digit. Then we remove that digit using <code>/ 10</code>.</p>
-
-<p><strong>Example: </strong> If the number is 234: </p>
-<ul>
-<li>234 % 10 = 4 → take it into product</li>
-<li>234 / 10 = 23 → remove last digit</li>
-<li>repeat until number becomes 0</li>
-</ul>
-
-<p>The loop keeps running until there are no digits left.</p>
-`,
-
-  whatHappens: [
-  "Program starts and initializes product = 1.",
-  "It enters the while loop as long as num != 0.",
-  "Each iteration extracts the last digit using num % 10.",
-  "That digit is multiplied into product.",
-  "Then num is reduced using num / 10 to remove the last digit.",
-  "When num becomes 0, loop stops and result is printed."
-  ],
-
-  breakdown: [
-  {
-    code: "int product = 1;",
-    text: "We start from 1 because multiplying by 0 would always keep result at 0."
-  },
-  {
-    code: "product *= num % 10;",
-    text: "Extracts last digit and multiplies it into the running product."
-  },
-  {
-    code: "num /= 10;",
-    text: "Removes the last digit so the next iteration processes the next one."
-  },
-  {
-    code: "while(num != 0)",
-    text: "Keeps looping until all digits are processed."
-  }
-  ],
-
-  mistakes: [
-  {
-    text: "Starting product at 0 — this makes the final answer always 0 no matter the input."
-  },
-  {
-    text: "Forgetting num /= 10 — this causes an infinite loop."
-  },
-  {
-    text: "Using float instead of int — digits must be handled as integers."
-  }
-  ],
-
-  syntaxTip: "If the number contains 0, the final product becomes 0 automatically. There is no need for special handling.",
-
-  output: "Enter number: 234\nThe product of the digits is: 24",
-
-  rawCode: `#include <stdio.h>\n\nvoid product_of_digits(int num) {\n    int product = 1;\n    while(num != 0) {\n        product *= num % 10;\n        num /= 10;\n    }\n    printf(\"The product of the digits is: %d\\n\", product);\n}\n\nint main() {\n    int n;\n    printf(\"Enter number: \");\n    scanf(\"%d\", &n);\n    product_of_digits(n);\n    return 0;\n}`,
-
-  tryIt: {
-  desc: "Change the number and see how the digit product changes.",
-  inputs: [
-    { id: "ti_n", label: "Number", type: "number", default: 234 }
-  ],
-  run(vals) {
-    let n = parseInt(vals.ti_n) || 0;
-    let num = Math.abs(n);
-    if (num === 0) return "The product of the digits is: 0";
-
-    let product = 1;
-    while (num !== 0) {
-      product *= (num % 10);
-      num = Math.floor(num / 10);
-    }
-    return `The product of the digits is: ${product}`;
-  }
-  }
-},
-  {
     num: 29,
     title: "Print Natural Numbers 1 to n (while loop)",
     tag: "task2",
@@ -1899,7 +1811,7 @@ int main() {
     ],
     mistakes: [
       { text: "Using i++ instead of i-- -- since we start at a high number, adding to it means we will never reach 1. (Infinite loop!)" },
-      { text: "Using the condition i <= 1 -- the loop will never start because a high number is already greater than 1." }
+      { text: "Using <code>i <= 1</code> as the condition instead of <code>i >= 1</code> — this reads 'loop while i is less than or equal to 1', so for any starting value above 1, the loop immediately exits without printing anything." }
     ],
     syntaxTip: "<code>i--</code> decreases the variable after the current operation finishes.",
     output: "n n-1 n-2 ... 1",

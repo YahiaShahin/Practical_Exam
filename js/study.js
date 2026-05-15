@@ -2,7 +2,7 @@
    DATA
 ═══════════════════════════════════ */
 const SCOPE_RULES = {
-  A:{ visible:['a'], note:'<strong>ScopeA is main().</strong> It is the outermost block. It can only see variables declared directly inside it: <strong>a</strong>.', why:'Think of scopes like nested rooms. A room can see its own furniture and the furniture of every room it is inside. ScopeA is the outermost room — nothing is outside it.', mistake:'Thinking a parent can reach into a child — it cannot. main() cannot see c or d even though they are declared inside it.' },
+  A:{ visible:['a'], note:'<strong>ScopeA is main().</strong> It is the outermost block. It can only see variables declared directly inside it: <strong>a</strong>.', why:'Think of scopes like nested rooms. A room can see its own furniture and the furniture of every room it is inside. ScopeA is the outermost room — nothing is outside it.', mistake:'Thinking a parent can reach into a child — it cannot. main() cannot see b, c, d, or e even though they are all declared somewhere inside it.' },
   B:{ visible:['a','b','e'], note:'<strong>ScopeB</strong> sees its own vars (<strong>b</strong>, <strong>e</strong>) plus everything in ScopeA (its parent): <strong>a</strong>. This is the <em>scope chain</em>.', why:'ScopeB is nested inside ScopeA. When C looks up a variable, it starts in the current scope, then walks outward one level at a time until found — or errors.', mistake:'Forgetting that e is visible here because it is declared in ScopeB itself. Order matters only inside the same scope (you cannot use a variable before its declaration line).' },
   C:{ visible:['a','b','c'], note:'<strong>ScopeC</strong> sees <strong>c</strong> (own) + <strong>b</strong> (parent B) + <strong>a</strong> (grandparent A). It <em>cannot</em> see <strong>d</strong> (sibling scope) or <strong>e</strong> (declared after C in B).', why:"Sibling scopes are completely blind to each other — separate rooms on the same floor. Once a scope's closing brace } is passed, its variables are gone from the stack.", mistake:'Assuming d is visible because it is at the same level — it is not. Scopes are not shared; they are sequential and isolated.' },
   D:{ visible:['a','b','d'], note:'<strong>ScopeD</strong> sees <strong>d</strong> (own) + <strong>b</strong> (parent B) + <strong>a</strong> (grandparent A). Cannot see <strong>c</strong> (sibling scope, already closed).', why:'Same logic as C — D inherits from its parents (B → A) but is isolated from sibling C. The chain only goes upward, never sideways.', mistake:'Thinking that because C and D are both children of B, they can see each other. They cannot — each scope is its own private bubble.' },
@@ -51,7 +51,7 @@ const CONCEPT_DATA = {
     {code:'%.2f',text:'Prints a float with exactly 2 decimal places. The .2 is the precision specifier.'},
     {code:'%c',text:'Prints a single char.'},
     {code:'%s',text:'Prints a string (char array). Reads characters until it hits \\0.'},
-    {code:'%ld',text:'Prints a long int. Use when your integer might exceed ~2 billion.'},
+    {code:'%lld',text:'Prints a long long int. Use when your integer might exceed ~2 billion. (On most platforms, plain long is also 32-bit — long long is the safe choice for large numbers.)'},
   ],mistake:'Using %d with a float variable or %f with an int. This causes garbage output — the format specifier must match the variable type exactly.'},
   scanf:{title:'scanf & the & Operator',rows:[
     {code:'scanf("%d", &x);',text:'Reads an integer from the keyboard and stores it in x. The & gives scanf the memory address of x so it knows where to write.'},
@@ -175,9 +175,9 @@ function runIf(){
   document.getElementById('score-disp').textContent=v;
   const cases=[
     {id:'if-r0',arr:'if-arr0',cond:v>=90,diam:'ifc-d0',body:'ifc-b0'},
-    {id:'if-r1',arr:'if-arr1',cond:v>=75&&v<90,diam:'ifc-d1',body:'ifc-b1'},
-    {id:'if-r2',arr:'if-arr2',cond:v>=60&&v<75,diam:'ifc-d2',body:'ifc-b2'},
-    {id:'if-r3',arr:'if-arr3',cond:v<60,body:'ifc-b3'},
+    {id:'if-r1',arr:'if-arr1',cond:v>=75,diam:'ifc-d1',body:'ifc-b1'},
+    {id:'if-r2',arr:'if-arr2',cond:v>=60,diam:'ifc-d2',body:'ifc-b2'},
+    {id:'if-r3',arr:'if-arr3',cond:true,body:'ifc-b3'},
   ];
   let found=false, activeIdx=-1;
   cases.forEach((c,idx)=>{
@@ -348,18 +348,18 @@ function buildLoopFlowchart(type, phase, state, p) {
 
   const getNode = (nodeType, text, isActive) => {
     if (nodeType === 'start') return `<div class="ifc-start ${isActive ? (phase==='done'?'done':'active') : ''}">${text}</div>`;
-    if (nodeType === 'diamond') return `<div class="ifc-diamond ${isActive ? 'active-d' : ''}" style="height:auto; min-height:60px; padding:10px 0;"><svg viewBox="0 0 130 60" preserveAspectRatio="none"><polygon points="65,4 126,30 65,56 4,30" fill="var(--cyan-dim)" stroke="var(--border2)" stroke-width="1.5"/></svg><span>${text}</span></div>`;
+    if (nodeType === 'diamond') return `<div class="ifc-diamond ${isActive ? 'active-d' : ''}"><svg viewBox="0 0 130 60" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%"><polygon points="65,4 126,30 65,56 4,30" fill="var(--cyan-dim)" stroke="var(--border2)" stroke-width="1.5"/></svg><span>${text}</span></div>`;
     if (nodeType === 'box') return `<div class="ifc-body-box ${isActive ? 'active-b' : ''}">${text}</div>`;
     return '';
   };
 
   if (type === 'for' || type === 'while') {
     return `
-    <div style="display:flex; flex-direction:column; align-items:center; font-family:var(--mono); font-size:13px;">
+    <div style="display:flex; flex-direction:column; align-items:center; font-family:var(--mono); font-size:12px; width:100%;">
       ${getNode('start', initTxt, phase === 'init')}
       <div class="fc-arr-v"></div>
       ${getNode('diamond', checkTxt, phase === 'check')}
-      <div style="display:flex; gap:32px; align-items:flex-start; margin-top:2px;">
+      <div style="display:flex; gap:24px; align-items:flex-start; margin-top:2px;">
         <div style="display:flex; flex-direction:column; align-items:center">
           <div class="ifc-yes" style="margin-bottom:0">YES</div>
           <div class="fc-arr-v"></div>
@@ -378,7 +378,7 @@ function buildLoopFlowchart(type, phase, state, p) {
     </div>`;
   } else {
     return `
-    <div style="display:flex; flex-direction:column; align-items:center; font-family:var(--mono); font-size:13px;">
+    <div style="display:flex; flex-direction:column; align-items:center; font-family:var(--mono); font-size:12px; width:100%;">
       ${getNode('start', initTxt, phase === 'init')}
       <div class="fc-arr-v"></div>
       ${getNode('box', bodyTxt, phase === 'body')}
@@ -386,7 +386,7 @@ function buildLoopFlowchart(type, phase, state, p) {
       ${getNode('box', stepTxt, phase === 'step')}
       <div class="fc-arr-v"></div>
       ${getNode('diamond', checkTxt, phase === 'check')}
-      <div style="display:flex; gap:32px; align-items:flex-start; margin-top:2px;">
+      <div style="display:flex; gap:24px; align-items:flex-start; margin-top:2px;">
         <div style="display:flex; flex-direction:column; align-items:center">
           <div class="ifc-yes" style="margin-bottom:0">YES</div>
           <div class="fc-arr-turn"></div>
@@ -402,119 +402,113 @@ function buildLoopFlowchart(type, phase, state, p) {
   }
 }
 
-function setPhaseNote(msg, phase) {
-  const el = document.getElementById('phase-note');
-  if (!el) return;
-  
-  const p = LOOP_PARAMS[curLoop];
-  const fc = buildLoopFlowchart(curLoop, phase, loopState, p);
-  
-  // Build the live code panel with the active line highlighted
-  const lines = getCodeLines(curLoop);
-  // Map phase → which line index to highlight
-  const phaseLineMap = {
-    for:    { init: 0, check: 0, body: 1, step: 0, done: null },
-    while:  { init: 0, check: 1, body: 2, step: 3, done: null },
-    dowhile:{ init: 0, body: 2, step: 3, check: 4, done: null },
-  };
-  const activeLine = phase ? (phaseLineMap[curLoop]?.[phase] ?? null) : null;
-
-  const codeHTML = lines.map((line, i) => {
-    const isActive = i === activeLine;
-    // Tokenize BEFORE escaping so span tags don't get escaped
-    // Strategy: split line into tokens, escape each token's text, wrap keywords in spans
-    const tokenize = (raw) => {
-      // We'll do a simple sequential replacement on the raw string
-      // using placeholders to avoid double-processing
-      let result = '';
-      let j = 0;
-      while (j < raw.length) {
-        // Check for string literal
-        if (raw[j] === '"') {
-          let end = j + 1;
-          while (end < raw.length && raw[end] !== '"') end++;
-          end++;
-          const tok = raw.slice(j, end);
-          result += `<span class="lc-str">${tok.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span>`;
-          j = end;
-          continue;
+/* ── Tokenizer (shared) ── */
+function tokenizeLine(raw) {
+  const keywords = ['printf', 'while', 'for', 'do', 'int'];
+  let result = '', j = 0;
+  while (j < raw.length) {
+    if (raw[j] === '"') {
+      let end = j + 1;
+      while (end < raw.length && raw[end] !== '"') end++;
+      end++;
+      result += `<span class="lc-str">${raw.slice(j,end).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span>`;
+      j = end; continue;
+    }
+    let matched = false;
+    for (const kw of keywords) {
+      if (raw.startsWith(kw, j)) {
+        const before = j > 0 ? raw[j-1] : ' ';
+        const after = j + kw.length < raw.length ? raw[j + kw.length] : ' ';
+        if (!/\w/.test(before) && !/\w/.test(after)) {
+          result += `<span class="lc-kw">${kw}</span>`;
+          j += kw.length; matched = true; break;
         }
-        // Check for keyword at word boundary
-        const keywords = ['printf', 'while', 'for', 'do', 'int'];
-        let matched = false;
-        for (const kw of keywords) {
-          if (raw.startsWith(kw, j)) {
-            const before = j > 0 ? raw[j-1] : ' ';
-            const after = j + kw.length < raw.length ? raw[j + kw.length] : ' ';
-            const isBoundary = !/\w/.test(before) && !/\w/.test(after);
-            if (isBoundary) {
-              result += `<span class="lc-kw">${kw}</span>`;
-              j += kw.length;
-              matched = true;
-              break;
-            }
-          }
-        }
-        if (matched) continue;
-        // Check for number at word boundary
-        if (/\d/.test(raw[j])) {
-          const before = j > 0 ? raw[j-1] : ' ';
-          if (!/\w/.test(before)) {
-            let numEnd = j;
-            while (numEnd < raw.length && /\d/.test(raw[numEnd])) numEnd++;
-            const after = numEnd < raw.length ? raw[numEnd] : ' ';
-            if (!/\w/.test(after)) {
-              const num = raw.slice(j, numEnd);
-              result += `<span class="lc-num">${num}</span>`;
-              j = numEnd;
-              continue;
-            }
-          }
-        }
-        // Regular character — escape and append
-        const ch = raw[j];
-        if (ch === '&') result += '&amp;';
-        else if (ch === '<') result += '&lt;';
-        else if (ch === '>') result += '&gt;';
-        else result += ch;
-        j++;
       }
-      return result;
-    };
+    }
+    if (matched) continue;
+    if (/\d/.test(raw[j])) {
+      const before = j > 0 ? raw[j-1] : ' ';
+      if (!/\w/.test(before)) {
+        let numEnd = j;
+        while (numEnd < raw.length && /\d/.test(raw[numEnd])) numEnd++;
+        const after = numEnd < raw.length ? raw[numEnd] : ' ';
+        if (!/\w/.test(after)) {
+          result += `<span class="lc-num">${raw.slice(j, numEnd)}</span>`;
+          j = numEnd; continue;
+        }
+      }
+    }
+    const ch = raw[j];
+    result += ch==='&'?'&amp;':ch==='<'?'&lt;':ch==='>'?'&gt;':ch;
+    j++;
+  }
+  return result;
+}
 
-    return `<div class="lc-line${isActive ? ' lc-active' : ''}"><span class="lc-ln">${i + 1}</span><span class="lc-code">${tokenize(line)}</span></div>`;
-  }).join('');
-
-  // Phase label for the code panel
-  const phaseLabels = {
-    init: 'INIT', check: 'CONDITION', body: 'BODY', step: 'UPDATE', done: 'DONE', '': 'READY'
-  };
-  const phaseLabel = phaseLabels[phase] || 'READY';
-
-  let stateMsg = msg || 'Hit <strong>Step</strong> or <strong>Play</strong> to watch the loop execute phase by phase.';
-  
+/* Build the 3-panel grid once; patch inner content on each step */
+function initLoopVizPanel() {
+  const el = document.getElementById('phase-note');
+  if (!el || el.querySelector('.loop-viz-wrap')) return;
   el.innerHTML = `
     <div class="loop-viz-wrap">
-      <!-- Flowchart panel -->
-      <div class="loop-fc-panel">
-        ${fc}
-      </div>
-      <!-- Code panel -->
+      <div class="loop-fc-panel" id="lv-fc-panel"></div>
       <div class="loop-code-side">
         <div class="loop-code-side-hdr">
           <span class="loop-code-side-title">C Code</span>
-          <span class="loop-phase-badge loop-phase-${phase || 'ready'}">${phaseLabel}</span>
+          <span class="loop-phase-badge" id="lv-phase-badge">READY</span>
         </div>
-        <div class="loop-code-side-body">${codeHTML}</div>
+        <div class="loop-code-side-body" id="lv-code-body"></div>
       </div>
-      <!-- Explanation panel -->
       <div class="loop-expl-panel">
         <div class="loop-expl-label">Execution State</div>
-        <div class="loop-phase-display">Phase: <span class="loop-phase-name">${phaseLabel}</span></div>
-        <div class="loop-expl-msg">${stateMsg}</div>
+        <div class="loop-phase-display">Phase: <span class="loop-phase-name" id="lv-phase-name">READY</span></div>
+        <div class="loop-expl-msg" id="lv-expl-msg">Hit <strong>Step</strong> or <strong>Play</strong> to watch the loop execute phase by phase.</div>
       </div>
-    </div>
-  `;
+    </div>`;
+}
+
+function seedCodeLines() {
+  const codeBody = document.getElementById('lv-code-body');
+  if (!codeBody) return;
+  codeBody.innerHTML = getCodeLines(curLoop).map((line, i) =>
+    `<div class="lc-line" id="lv-cl-${i}"><span class="lc-ln">${i+1}</span><span class="lc-code">${tokenizeLine(line)}</span></div>`
+  ).join('');
+}
+
+function setPhaseNote(msg, phase) {
+  initLoopVizPanel();
+
+  const phaseLabels = { init:'INIT', check:'CONDITION', body:'BODY', step:'UPDATE', done:'DONE', '':'READY' };
+  const phaseLabel = phaseLabels[phase] || 'READY';
+  const stateMsg = msg || 'Hit <strong>Step</strong> or <strong>Play</strong> to watch the loop execute phase by phase.';
+
+  /* 1 — flowchart: only replace inner HTML of the fixed-size panel */
+  const fcPanel = document.getElementById('lv-fc-panel');
+  if (fcPanel) fcPanel.innerHTML = buildLoopFlowchart(curLoop, phase, loopState, LOOP_PARAMS[curLoop]);
+
+  /* 2 — phase badge: swap class + text, never rebuild the container */
+  const badge = document.getElementById('lv-phase-badge');
+  if (badge) { badge.className = `loop-phase-badge loop-phase-${phase || 'ready'}`; badge.textContent = phaseLabel; }
+
+  /* 3 — code lines: just toggle lc-active on existing rows */
+  const phaseLineMap = {
+    for:    { init:0, check:0, body:1, step:0, done:null },
+    while:  { init:0, check:1, body:2, step:3, done:null },
+    dowhile:{ init:0, body:2, step:3, check:4, done:null },
+  };
+  const activeLine = phase ? (phaseLineMap[curLoop]?.[phase] ?? null) : null;
+  const codeBody = document.getElementById('lv-code-body');
+  if (codeBody) {
+    if (!codeBody.children.length) seedCodeLines();
+    Array.from(codeBody.children).forEach((row, i) => row.classList.toggle('lc-active', i === activeLine));
+  }
+
+  /* 4 — explanation text */
+  const phaseName = document.getElementById('lv-phase-name');
+  if (phaseName) phaseName.textContent = phaseLabel;
+  const explMsg = document.getElementById('lv-expl-msg');
+  if (explMsg) explMsg.innerHTML = stateMsg;
+
 }
 
 function flashVar(v){
@@ -574,6 +568,9 @@ function loopReset(){
   loopState=getInitState(); loopPhase='init'; loopDone=false;
   buildLoopCode(); renderLoopParams(); updateLoopUI(null);
   const b=document.getElementById('btn-play'); if(b) b.textContent='Play ▶';
+  /* clear the persistent code panel so seedCodeLines rebuilds it for the new loop type */
+  const codeBody=document.getElementById('lv-code-body');
+  if(codeBody) codeBody.innerHTML='';
   setPhaseNote('','');
 }
 loopReset();
@@ -600,11 +597,15 @@ function renderArr(){
 function arrClick(i){
   arrSel=i; renderArr();
   const addr='0x'+(BASE+i*4).toString(16).toUpperCase();
+  const isLast = i === arrData.length - 1;
+  const nextInfo = isLast
+    ? `<span style="font-size:11px;color:var(--red)">arr[${i+1}] would be OUT OF BOUNDS — valid indices are 0–${arrData.length-1}</span>`
+    : `<span style="font-size:11px;color:var(--text3)">Next: 0x${(BASE+(i+1)*4).toString(16).toUpperCase()} (i+1 = +4 bytes)</span>`;
   document.getElementById('arr-info').innerHTML=
     '<strong>arr['+i+']</strong> = <strong style="color:var(--cyan)">'+arrData[i]+'</strong>'+
     ' &nbsp;|&nbsp; index: <strong>'+i+'</strong>'+
     ' &nbsp;|&nbsp; address: <code>'+addr+'</code>'+
-    ' &nbsp;|&nbsp; <span style="font-size:11px;color:var(--text3)">Next: 0x'+(BASE+(i+1)*4).toString(16).toUpperCase()+' (i+1 = +4 bytes)</span>';
+    ' &nbsp;|&nbsp; '+nextInfo;
   document.getElementById('arr-edit-lbl').style.display='inline';
   document.getElementById('arr-edit-idx').textContent=i;
   const inp=document.getElementById('arr-edit-val');
@@ -813,8 +814,8 @@ const PREC_EXAMPLES = [
     label: 'Arithmetic before comparison',
     expr:  'x + 1 > 5  where x = 4',
     steps: [
-      { op: 'x + 1',  result: '5',      note: 'Arithmetic (priority 3) runs first' },
-      { op: '5 > 5',  result: '0 (false)', note: 'Comparison (priority 4) runs after' },
+      { op: 'x + 1',  result: '5',      note: 'Arithmetic runs before comparison operators' },
+      { op: '5 > 5',  result: '0 (false)', note: 'Comparison runs after arithmetic is resolved' },
     ],
     final: '0 (false)',
     code:  'int x = 4;\nif (x + 1 > 5)   // 4+1=5, then 5>5 → false (0)\n    printf("yes");\nelse\n    printf("no");  // prints "no"'
@@ -833,8 +834,8 @@ const PREC_EXAMPLES = [
     label: '&& before ||',
     expr:  '0 || 1 && 1',
     steps: [
-      { op: '1 && 1', result: '1 (true)',  note: '&& (priority 6) runs before ||' },
-      { op: '0 || 1', result: '1 (true)',  note: 'Then || (priority 7)' },
+      { op: '1 && 1', result: '1 (true)',  note: '&& binds tighter than || — evaluated first' },
+      { op: '0 || 1', result: '1 (true)',  note: '|| is evaluated last among logical operators' },
     ],
     final: '1 (true)',
     code:  'int r = 0 || 1 && 1;\n// step 1: 1&&1 → 1\n// step 2: 0||1 → 1  →  r = 1\n\n// Compare: (0||1) && 1 → 1&&1 → 1  (same here)\n// But:     0 || (0&&1) → 0||0 → 0  (different!)'
