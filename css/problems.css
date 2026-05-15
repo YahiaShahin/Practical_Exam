@@ -397,3 +397,16 @@
   white-space: pre-wrap;
   word-break: break-word;
 }
+/* ── iOS-SAFE BODY SCROLL LOCK ──────────────────
+   Using a class + position:fixed instead of
+   overflow:hidden, which breaks touch scroll on iOS.
+   JS adds/removes .modal-open on <body>.
+─────────────────────────────────────────────── */
+body.modal-open {
+  overflow: hidden;
+  /* On iOS, overflow:hidden alone doesn't stop scroll.
+     position:fixed + width:100% does — but saves scroll pos via JS */
+  position: fixed;
+  width: 100%;
+  /* top is set dynamically by JS to preserve scroll position */
+}

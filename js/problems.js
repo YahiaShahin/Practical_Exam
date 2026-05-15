@@ -283,7 +283,10 @@ function openModal(num){
   if(idx<0){queue=Q.map(q=>q.num);idx=queue.indexOf(num);}
   renderModal(num);
   document.getElementById('modal').classList.add('active');
-  document.body.style.overflow='hidden';
+  /* Save scroll position — position:fixed resets it on iOS */
+  document.body.dataset.scrollY = window.scrollY;
+  document.body.style.top = '-' + window.scrollY + 'px';
+  document.body.classList.add('modal-open');
   syncModeBtn();
   // highlight active row
   document.querySelectorAll('.q-row').forEach(r=>r.classList.remove('active'));
@@ -437,17 +440,26 @@ function copyModalCode(){
 function navModal(dir){
   idx=Math.max(0,Math.min(queue.length-1,idx+dir));
   renderModal(queue[idx]);
-  document.getElementById('m-left').scrollTop=0;
+  /* Scroll to top — modal-wrap is scroller on mobile, m-left on desktop */
+  const wrap=document.querySelector('.modal-wrap');
+  if(wrap)wrap.scrollTop=0;
+  const left=document.getElementById('m-left');
+  if(left)left.scrollTop=0;
   if(tryItOpen)setTimeout(()=>runTryIt(queue[idx]),50);
-  // Update row highlight
   document.querySelectorAll('.q-row').forEach(r=>r.classList.remove('active'));
   const row=document.getElementById('qr-'+queue[idx]);
   if(row) row.classList.add('active');
 }
-function onOverlayClick(e){if(e.target===document.getElementById('modal'))closeModal();}
+/* Click outside modal-box to close */
+function onOverlayClick(e){
+  if(!document.getElementById('modal-box').contains(e.target))closeModal();
+}
 function closeModal(){
   document.getElementById('modal').classList.remove('active');
-  document.body.style.overflow='';
+  const scrollY = parseInt(document.body.dataset.scrollY || '0');
+  document.body.classList.remove('modal-open');
+  document.body.style.top = '';
+  window.scrollTo(0, scrollY);
   document.querySelectorAll('.q-row').forEach(r=>r.classList.remove('active'));
 }
 
@@ -495,12 +507,22 @@ function escHtml(s){
     .replace(/\\n/g, '\n'); // Handle literal \n strings if they exist
 }
 
-/* SWIPE */
-let tx=0;
-document.getElementById('modal-box').addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
+/* SWIPE — only trigger on clearly horizontal gestures, not vertical scrolls */
+let tx=0,ty=0,tCancelled=false;
+document.getElementById('modal-box').addEventListener('touchstart',e=>{
+  tx=e.touches[0].clientX;ty=e.touches[0].clientY;tCancelled=false;
+},{passive:true});
+document.getElementById('modal-box').addEventListener('touchmove',e=>{
+  const dx=Math.abs(e.touches[0].clientX-tx);
+  const dy=Math.abs(e.touches[0].clientY-ty);
+  if(dy>dx)tCancelled=true; /* vertical scroll intent — cancel swipe */
+},{passive:true});
 document.getElementById('modal-box').addEventListener('touchend',e=>{
+  if(tCancelled)return;
   const d=e.changedTouches[0].clientX-tx;
-  if(Math.abs(d)>70&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA')navModal(d<0?1:-1);
+  const dy=Math.abs(e.changedTouches[0].clientY-ty);
+  /* Require clearly horizontal: >60px horizontal, <40px vertical drift */
+  if(Math.abs(d)>60&&dy<40&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA')navModal(d<0?1:-1);
 },{passive:true});
 
 /* THEME */
@@ -561,14 +583,17 @@ function showCelebration(variant) {
   }
 
   ov.classList.add('active');
-  document.body.style.overflow = 'hidden';
+  document.body.classList.add('modal-open');
 }
 
 function closeCelebration() {
   const ov = document.getElementById('celebrate-overlay');
   if (!ov) return;
   ov.classList.remove('active', 'celebrate-again');
-  document.body.style.overflow = '';
+  const scrollY = parseInt(document.body.dataset.scrollY || '0');
+  document.body.classList.remove('modal-open');
+  document.body.style.top = '';
+  window.scrollTo(0, scrollY);
 }
 
 /* Full confetti — first time */
