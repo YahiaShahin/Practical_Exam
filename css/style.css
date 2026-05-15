@@ -1178,3 +1178,63 @@ pre {
   .cta-card { padding: 1.25rem 1rem; }
   .hero-meta { flex-direction: column; gap: .5rem; align-items: center; }
 }
+
+/* ═══════════════════════════════════════════════
+   UNIVERSAL OVERFLOW FIX
+   Prevents any content from breaking card layouts
+═══════════════════════════════════════════════ */
+
+/* All cards and containers must contain their content */
+.card, .cta-card, .info-item, .topic-chip, 
+.demo, .callout-info, .callout-warn, .callout-error,
+.tip, .warn, [class*="card"], [class*="-card"] {
+  overflow: hidden;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+
+/* Code inside cards must scroll horizontally, not overflow */
+.card code, .cta-card code, .demo code,
+.card pre, .cta-card pre, .demo pre,
+.card .cb, .cta-card .cb, .demo .cb {
+  display: block;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: pre;
+  word-break: normal;
+  overflow-wrap: normal;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Inline code should wrap if it's too long */
+p code, li code, span code, div > code:not(pre code) {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Text content in cards should always wrap */
+.card p, .card h1, .card h2, .card h3, .card h4,
+.cta-card p, .cta-card h1, .cta-card h2, .cta-card h3,
+.demo p, .tip, .warn {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  max-width: 100%;
+}
+
+/* Long URLs or unbreakable strings should break */
+.card a, .cta-card a, .demo a {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Ensure all child elements respect container width */
+.card *, .cta-card *, .demo *, 
+.tip *, .warn *, .callout-info *, .callout-warn *, .callout-error * {
+  max-width: 100%;
+  box-sizing: border-box;
+}

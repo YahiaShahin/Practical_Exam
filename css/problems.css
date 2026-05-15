@@ -346,3 +346,46 @@
   .expl{font-size:.82rem}
   .out-txt{font-size:10px}
 }
+
+
+/* ═══════════════════════════════════════
+   UNIVERSAL OVERFLOW FIX FOR PROBLEMS PAGE
+═══════════════════════════════════════ */
+
+/* Code blocks must scroll, not overflow */
+.bk-code, .code-display pre, .out-txt, .ti-terminal {
+  overflow-x: auto !important;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+  display: block;
+}
+
+/* Ensure breakdown code wraps on mobile if needed */
+@media (max-width: 768px) {
+  .bk-code {
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+/* All text content in cards should wrap */
+.q-row, .qr-title, .qr-brief, .expl, .bk-text, 
+.mistake-txt, .syn-txt, .what-box p {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+
+/* Modal and panels must contain content */
+.modal, .m-left, .m-right, .m-body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* Inline code should wrap if too long */
+.expl code, .bk-text code, .mistake-txt code, .syn-txt code, .what-box code {
+  white-space: pre-wrap;
+  word-break: break-word;
+}

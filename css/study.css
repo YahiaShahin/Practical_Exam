@@ -1233,3 +1233,42 @@ input[type=number]:focus, select:focus { border-color: var(--cyan); }
 @media (max-width: 400px) {
   .fn-type-grid { grid-template-columns: 1fr; }
 }
+
+
+/* ═══════════════════════════════════════
+   UNIVERSAL OVERFLOW FIX FOR STUDY PAGE
+═══════════════════════════════════════ */
+
+/* Code blocks must scroll, not overflow */
+.cb, pre, code {
+  overflow-x: auto !important;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+/* Inline code should wrap */
+p code, li code, span code, .expl code {
+  white-space: pre-wrap !important;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* All text content should wrap */
+.section, .expl, .tip, .warn, .demo, .card {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+
+/* Demo boxes and interactive elements */
+.demo, .demo *, .card, .card * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ensure containers don't overflow */
+.main-content, .section, .hero {
+  overflow-x: hidden;
+  max-width: 100%;
+}
