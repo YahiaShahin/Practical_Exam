@@ -497,7 +497,7 @@ function showToast(msg){
   clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2100);
 }
 
-/* /* HELPERS */
+/* HELPERS */
 function escHtml(s){
   if(!s)return '';
   return s.toString()
