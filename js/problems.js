@@ -497,7 +497,7 @@ function showToast(msg){
   clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2100);
 }
 
-/* HELPERS */
+/* /* HELPERS */
 function escHtml(s){
   if(!s)return '';
   return s.toString()
@@ -505,6 +505,17 @@ function escHtml(s){
     .replace(/</g,'&lt;')
     .replace(/>/g,'&gt;')
     .replace(/\\n/g, '\n'); // Handle literal \n strings if they exist
+}
+
+// Fix swiping inside the code block - Marwan was here :)
+const codeDisplay = document.getElementById('code-display');
+
+if (codeDisplay) {
+    ['touchstart', 'touchmove', 'touchend'].forEach(eventType => {
+        codeDisplay.addEventListener(eventType, (e) => {
+            e.stopPropagation();
+        }, { passive: true });
+    });
 }
 
 /* SWIPE — only trigger on clearly horizontal gestures, not vertical scrolls */
