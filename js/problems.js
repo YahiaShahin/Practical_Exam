@@ -507,6 +507,17 @@ function escHtml(s){
     .replace(/\\n/g, '\n'); // Handle literal \n strings if they exist
 }
 
+// Fix swiping inside the code block - Marwan was here :)
+const codeDisplay = document.getElementById('code-display');
+
+if (codeDisplay) {
+    ['touchstart', 'touchmove', 'touchend'].forEach(eventType => {
+        codeDisplay.addEventListener(eventType, (e) => {
+            e.stopPropagation();
+        }, { passive: true });
+    });
+}
+
 /* SWIPE — only trigger on clearly horizontal gestures, not vertical scrolls */
 let tx=0,ty=0,tCancelled=false;
 document.getElementById('modal-box').addEventListener('touchstart',e=>{
